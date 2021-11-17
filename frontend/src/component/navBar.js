@@ -2,7 +2,6 @@ import React from 'react'
 import {
     Routes,
     Route,
-    Link
 } from "react-router-dom";
 import { FaUserCircle } from 'react-icons/fa';
 import Investigation from '../pages/investigation/investigation';
