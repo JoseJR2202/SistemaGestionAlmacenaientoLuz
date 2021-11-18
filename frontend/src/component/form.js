@@ -1,59 +1,55 @@
 import React from 'react'
-import * as Yup from 'yup'
 import { Formik, Field, ErrorMessage } from "formik"
-import { Form } from 'react-bootstrap';
+import { Form, Button } from 'react-bootstrap';
 
+const form = ({jsonform, jsonfield, jsonValidation, submit})=>{
 
-const form = ()=>{
-    
-    const schemaLogin= Yup.object().shape({
-        cedula: Yup.number()
-        .required("Este campo es requerido")
-        .integer("numero no valido"),
-        contrasenia: Yup.string()
-        .required("Este campo es requerido")
-        .min(5, "minimo 5 caracteres")
+    const items = jsonfield.map(item=>{
+        return(<div key={item.name}>
+            <Form.Group className="mb-3" controlId="exampleForm.ControlInput1">
+            <Form.Label>{item.title? item.title:item.name}</Form.Label>
+            <Field
+                className="form-control"
+                name={item.name}
+                placeholder={`ingrese su ${item.title}`}
+                type={item.type}
+                as={item.as? item.as : 'input'}
+            />
+            <ErrorMessage 
+                name={item.name}
+                component="div"
+                className="field-error text-danger"
+            />
+            </Form.Group>
+        </div>  )
+        
     })
 
     return(
         <div>
             <Formik
-            initialValues={{
-                 cedula:"",
-                contrasenia:""
-            }}
-            validationSchema={schemaLogin}
+            initialValues={jsonform}
+            validationSchema={jsonValidation}
+            onSubmit={submit}
             >
-                <form>
-                    <Form.Group className="mb-3" controlId="exampleForm.ControlInput1">
-                        <Form.Label>Cedula</Form.Label>
-                        <Field
-                            className="form-control"
-                            name="cedula"
-                            placeholder="ingrese su cedula"
-                            type="text"
-                        />
-                        <ErrorMessage 
-                            name="cedula"
-                            component="div"
-                            className="field-error text-danger"
-                        />
-                    </Form.Group>
-                    <Form.Group className="mb-3" controlId="exampleForm.ControlTextarea1">
-                        <Form.Label>Password</Form.Label>
-                        <Field
-                            className="form-control"
-                            name="contrasenia"
-                            placeholder="ingrese su cedula"
-                            type="password"
-                        />
-                        <ErrorMessage 
-                            name="contrasenia"
-                            component="div"
-                            className="field-error text-danger"
-                        />
-                    </Form.Group>
-                </form>
+                {({
+          values,
+          errors,
+          touched,
+          handleSubmit,
+          isSubmitting,
+          validating,
+          valid,
+        }) =>
+                    (
+                    <form onSubmit={handleSubmit}>
+                        {items}
+                        <Button 
+                        variant="outline-primary"
+                        type="submit"
+                        >Enviar</Button>
+                    </form>
+                    )}
             </Formik>
         </div>
     )
