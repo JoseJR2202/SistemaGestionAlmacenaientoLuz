@@ -22,3 +22,14 @@ export const jsonMetting={
     invitados:"",
     descripcion:""
 };
+
+export const jsonSearchProyect={
+    titulo:"",
+    escuela:"",
+    facultad:""
+};
+
+export const jsonSearchMetting={
+    titulo:"",
+    horario:""
+};

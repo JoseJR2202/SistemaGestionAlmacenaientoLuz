@@ -44,11 +44,13 @@ export const fieldMeeting=[{
 },{
     title:'Fecha',
     name:'fecha',
-    type:'date'
+    type:'date',
+    Col:true
 },{
     title:'Hora',
     name:'hora',
-    type:'time'
+    type:'time',
+    Col:true
 },{
     title:'Invitar a (separe con \',\' los correos o cedulas',
     name:'invitados',
@@ -58,4 +60,33 @@ export const fieldMeeting=[{
     name:'descripcion',
     type:'text',
     as:'textarea'
+}];
+
+export const fieldSearchProyect=[{
+    title:"Titulo del proyecto",
+    name:'titulo',
+    type:'text',
+    Col:true
+},{
+    title:"Escuela",
+    name:"escuela",
+    type:"text",
+    Col:true
+},{
+    title:"Facultad",
+    name:"facultad",
+    type:"text",
+    Col:true
+}];
+
+export const fieldSearchMetting=[{
+    title:"Titulo de la Reunion",
+    name:'titulo',
+    type:'text',
+    Col:true
+},{
+    title:"Horario",
+    name:"horario",
+    type:"date",
+    Col:true
 }];
