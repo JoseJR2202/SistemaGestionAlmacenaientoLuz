@@ -1,15 +1,5 @@
 import React from 'react'
-import {
-    Routes,
-    Route,
-} from "react-router-dom";
 import { FaUserCircle } from 'react-icons/fa';
-import Investigation from '../pages/investigation/investigation';
-import Login from '../pages/user/login';
-import Home from '../pages/home';
-import Profile from '../pages/user/profile';
-import Meetings from '../pages/meetings/meetings';
-import Error from '../pages/error404';
 import {ReactComponent as ReactLogo} from '../img/logo.svg';
 
 import { Navbar, Container, Nav } from 'react-bootstrap';
@@ -33,14 +23,6 @@ const navBar = () => {
                 </Navbar.Collapse>
             </Container>
         </Navbar>
-        <Routes>
-            <Route path="/login" element={<Login/>}/>
-            <Route path="/" element={<Home />}/>
-            <Route path="/reuniones" element={<Meetings />}/>
-            <Route path="/investigaciones" element={<Investigation />}/>
-            <Route path="/perfil" element={<Profile />}/>
-            <Route path="*" element={<Error/>}/>
-        </Routes>
     </div>
   )
 }
