@@ -28,10 +28,11 @@ const Login = () => {
         </Row>
         <Row className="justify-content-center">
           <Col xs="auto">
-            <Forms jsonfield={fieldLogin} jsonform={jsonLogin} jsonValidation={schemaLogin} submit={(valores, {resetForm}) => {
+            <Forms jsonfield={fieldLogin} jsonform={jsonLogin} jsonValidation={schemaLogin} submit={ (valores, {resetForm}) => {
                   resetForm();
                   console.log(valores);
-                  navigate('/')
+                  sessionStorage.setItem('auth', true);
+                  navigate('/');                  
             }}/>
           </Col>
         </Row>

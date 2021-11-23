@@ -1,10 +1,12 @@
 import './App.css';
+import React from 'react';
 import {
   BrowserRouter as Router,
 } from "react-router-dom";
 import {
   Routes,
   Route,
+  Navigate
 } from "react-router-dom";
 import Investigation from './pages/investigation/investigation';
 import Login from './pages/user/login';
@@ -14,6 +16,16 @@ import Meetings from './pages/meetings/meetings';
 import Error from './pages/error404';
 
 function App() {
+
+  const PrivateRoute = function ({ children }) {
+    let isAuthenticated = sessionStorage.getItem('auth');
+    if (isAuthenticated) {
+      return children;
+    } else {
+      return <Navigate to="/login" replace />;
+    }
+  };
+
   return (
     <Router>
       {/* <Container fluid="sm">
@@ -24,10 +36,26 @@ function App() {
       </Container> */}
       <Routes>
             <Route path="/login" element={<Login/>}/>
-            <Route path="/" element={<Home />}/>
-            <Route path="/reuniones" element={<Meetings />}/>
-            <Route path="/investigaciones" element={<Investigation />}/>
-            <Route path="/perfil" element={<Profile />}/>
+            <Route path="/" element={
+              <PrivateRoute>
+                <Home/>
+              </PrivateRoute>
+            }/>
+            <Route path="/reuniones" element={
+              <PrivateRoute>
+                <Meetings/>
+              </PrivateRoute>
+            }/>
+            <Route path="/investigaciones" element={
+              <PrivateRoute>
+                <Investigation/>
+              </PrivateRoute>
+            }/>
+            <Route path="/perfil" element={
+              <PrivateRoute>
+                <Profile/>
+              </PrivateRoute>
+            }/>
             <Route path="*" element={<Error/>}/>
         </Routes>
     </Router>
