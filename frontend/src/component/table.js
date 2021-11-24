@@ -4,8 +4,8 @@ import { useTable, usePagination } from "react-table";
 
 const TableContend=({head, contend})=>{
 
-    const data= useMemo(()=>contend,[]);
-    const columns= useMemo(()=>head,[]);
+    const data= useMemo(()=>contend,[contend]);
+    const columns= useMemo(()=>head,[head]);
 
     const {
         getTableProps,
@@ -20,8 +20,8 @@ const TableContend=({head, contend})=>{
         gotoPage,
         nextPage,
         previousPage,
-        state: { pageIndex, pageSize },
-    } = useTable({ columns, data, initialState: { pageIndex: 0, pageSize:2}}, usePagination)
+        state: { pageIndex },
+    } = useTable({ columns, data, initialState: { pageIndex: 0, pageSize:4}}, usePagination)
 
     return(
         <div>
