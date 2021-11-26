@@ -8,13 +8,12 @@ const navBar = () => {
 
     return (
     <div>
-        <Navbar bg="light" expand="lg" >
+        <Navbar bg="light" expand="lg" fixed="top">
             <Container>
                 <Navbar.Brand href="/"><ReactLogo/></Navbar.Brand>
                 <Navbar.Toggle aria-controls="basic-navbar-nav" />
                 <Navbar.Collapse id="basic-navbar-nav">
                     <Nav className="ms-auto">
-                    <Nav.Link href="/login">Login</Nav.Link>
                     <Nav.Link href="/">Home</Nav.Link>
                     <Nav.Link href="/reuniones">Reuniones</Nav.Link>
                     <Nav.Link href="/investigaciones">Investigaciones</Nav.Link>

@@ -5,7 +5,7 @@ const listCard= ({jsonCard, image})=>{
     const cards=jsonCard.map((item, index)=>{
         return(
         <Col xs="auto" key={index}>
-            <Card style={{ width: '18rem' }}>
+            <Card style={{ width: '22rem'}}>
                 <Card.Img variant="top" src={image[index]} />
                 <Card.Body>
                     <Card.Title>{item.titulo}</Card.Title>

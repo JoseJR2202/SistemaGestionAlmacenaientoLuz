@@ -1,0 +1,17 @@
+.container{
+    position: relative;
+    display: inline-block;
+}
+
+.text{
+    position: absolute;    /* posición absolute con respecto al padre */
+    bottom: 0;             /* posicionada en la esquina inferior derecha */
+    left: 1rem;
+    color: white;
+    font-size: medium;
+}
+
+.image{
+    height: auto;
+    width: 100%;
+}
