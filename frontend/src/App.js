@@ -9,10 +9,12 @@ import {
   Navigate
 } from "react-router-dom";
 import Investigation from './pages/investigation/investigation';
+import PublicInvestigation from './pages/investigation/publicResearch';
 import Login from './pages/user/login';
 import Home from './pages/home';
 import Profile from './pages/user/profile';
 import Meetings from './pages/meetings/meetings';
+import CreateMeetings from './pages/meetings/createMeeting';
 import Error from './pages/error404';
 
 function App() {
@@ -46,9 +48,19 @@ function App() {
                 <Meetings/>
               </PrivateRoute>
             }/>
+             <Route path="/reuniones/crear" element={
+              <PrivateRoute>
+                <CreateMeetings/>
+              </PrivateRoute>
+            }/>
             <Route path="/investigaciones" element={
               <PrivateRoute>
                 <Investigation/>
+              </PrivateRoute>
+            }/>
+            <Route path="/investigaciones/publicar" element={
+              <PrivateRoute>
+                <PublicInvestigation/>
               </PrivateRoute>
             }/>
             <Route path="/perfil" element={

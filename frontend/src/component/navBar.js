@@ -4,11 +4,11 @@ import {ReactComponent as ReactLogo} from '../img/logo.svg';
 
 import { Navbar, Container, Nav } from 'react-bootstrap';
 
-const navBar = () => {
+const navBar = ({stop}) => {
 
     return (
     <div>
-        <Navbar bg="light" expand="lg" fixed="top">
+        <Navbar bg="light" expand="lg" fixed={stop?false :"top"}>
             <Container>
                 <Navbar.Brand href="/"><ReactLogo/></Navbar.Brand>
                 <Navbar.Toggle aria-controls="basic-navbar-nav" />

@@ -2,7 +2,7 @@ import React, {useMemo} from 'react'
 import { Table, ButtonToolbar, ButtonGroup, Button} from 'react-bootstrap';
 import { useTable, usePagination } from "react-table";
 
-const TableContend=({head, contend})=>{
+const TableContend=({head, contend, pagination})=>{
 
     const data= useMemo(()=>contend,[contend]);
     const columns= useMemo(()=>head,[head]);
@@ -58,28 +58,35 @@ const TableContend=({head, contend})=>{
                       })}
                 </tbody>
             </Table>
-            <ButtonToolbar aria-label="Toolbar with button groups">
-                <ButtonGroup className="me-2" aria-label="First group">
-                    <Button onClick={() => gotoPage(0)} disabled={!canPreviousPage}>
-                    {'<<'}
-                    </Button>
-                    <Button onClick={() => previousPage()} disabled={!canPreviousPage}>
-                    {'<'}
-                    </Button>
-                    <Button onClick={() => nextPage()} disabled={!canNextPage}>
-                    {'>'}
-                    </Button>
-                    <Button onClick={() => gotoPage(pageCount - 1)} disabled={!canNextPage}>
-                    {'>>'}
-                    </Button>
-                    <span>
-                    pagina{' '}
-                    <strong>
-                        {pageIndex + 1} de {pageOptions.length}
-                    </strong>{' '}
-                    </span>
-                </ButtonGroup>
-            </ButtonToolbar>
+            {
+                pagination?
+                    <>
+                        <ButtonToolbar aria-label="Toolbar with button groups">
+                            <ButtonGroup className="me-2" aria-label="First group">
+                                <Button onClick={() => gotoPage(0)} disabled={!canPreviousPage}>
+                                {'<<'}
+                                </Button>
+                                <Button onClick={() => previousPage()} disabled={!canPreviousPage}>
+                                {'<'}
+                                </Button>
+                                <Button onClick={() => nextPage()} disabled={!canNextPage}>
+                                {'>'}
+                                </Button>
+                                <Button onClick={() => gotoPage(pageCount - 1)} disabled={!canNextPage}>
+                                {'>>'}
+                                </Button>
+                                <span>
+                                pagina{' '}
+                                <strong>
+                                    {pageIndex + 1} de {pageOptions.length}
+                                </strong>{' '}
+                                </span>
+                            </ButtonGroup>
+                        </ButtonToolbar>       
+                    </>
+                :
+                <></>
+            }
         </div>
         
     )

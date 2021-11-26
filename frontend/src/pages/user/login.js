@@ -32,6 +32,7 @@ const Login = () => {
                   resetForm();
                   console.log(valores);
                   sessionStorage.setItem('auth', true);
+                  sessionStorage.setItem('acceso','Usuario')
                   navigate('/');                  
             }}/>
           </Col>

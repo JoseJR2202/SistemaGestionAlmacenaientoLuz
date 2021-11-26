@@ -52,6 +52,7 @@ const meetings = () => {
       <br/><br/>
       <Row className="justify-content-center">
           <Table 
+          pagination={true}
           head={headMeeting}
           contend={[{
             id:9,

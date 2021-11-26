@@ -28,6 +28,7 @@ const investigation = () => {
       <br/>
       <Row className="justify-content-center">
           <Table 
+          pagination={true}
           head={headProyect}
           contend={[{
             id:1,
