@@ -41,10 +41,10 @@ const Profile = () => {
               <Stack gap={2} >
                 <Button variant="primary" onClick={()=>navigate('/investigaciones/publicar')}>Publicar investigacion</Button>
                 <Button variant="primary" onClick={()=>navigate('/reuniones/crear')}>Crear Reunion</Button>
-                <Button variant="primary">Proximas Reuniones</Button>
-                <Button variant="primary">Buzon</Button>
+                <Button variant="primary" onClick={()=>navigate('/reuniones/proximas')}>Proximas Reuniones</Button>
+                <Button variant="primary" onClick={()=>navigate('/perfil/buzon')}>Buzon</Button>
                 {sessionStorage.getItem("acceso")==="Admin"?
-                <><Button variant="primary">Solicitudes</Button></>
+                <><Button variant="primary" onClick={()=>navigate('/perfil/solicitudes')}>Solicitudes</Button></>
                 :<></>
                 }
               </Stack>

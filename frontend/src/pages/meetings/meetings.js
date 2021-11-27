@@ -9,7 +9,10 @@ import header from '../../img/investigation3.jpg';
 import imagen from '../../img/chemistry.jpg';
 import civil from '../../img/civil.jpg';
 import programers from '../../img/computer.jpg';
-
+import { fieldSearchMetting } from '../../schemas/schemaField';
+import { jsonSearchMetting } from '../../schemas/schemaForm';
+import { schemaSearchMetting } from '../../schemas/schemaValidation';
+import Forms from '../../component/form';
 
 const meetings = () => {
   return (
@@ -50,6 +53,11 @@ const meetings = () => {
         </Col>
       </Row>
       <br/><br/>
+      <Forms jsonfield={fieldSearchMetting} jsonform={jsonSearchMetting} jsonValidation={schemaSearchMetting} submit={ (valores, {resetForm}) => {
+            resetForm();
+            console.log(valores);                
+      }}/>
+      <br/>
       <Row className="justify-content-center">
           <Table 
           pagination={true}

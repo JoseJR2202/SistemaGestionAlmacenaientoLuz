@@ -13,3 +13,11 @@ export const headMeeting=[{
   Header:"Horario",
   accessor:'extra'
 }]
+
+export const headMailBox=[{
+  Header:"Usuario",
+  accessor:'extra'
+}, {
+  Header:"Proyecto",
+  accessor:'titulo'
+}]

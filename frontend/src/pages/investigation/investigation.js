@@ -5,6 +5,10 @@ import Table from '../../component/table';
 import {headProyect} from '../../schemas/schemaHeadTable';
 import header from '../../img/investigation3.jpg';
 import Image from '../../component/image'
+import { fieldSearchProyect } from '../../schemas/schemaField';
+import { jsonSearchProyect } from '../../schemas/schemaForm';
+import { schemaSearchProyect } from '../../schemas/schemaValidation';
+import Forms from '../../component/form';
 
 const investigation = () => {
   return (
@@ -25,6 +29,11 @@ const investigation = () => {
           <h3>Buscador de Proyectos de Investigacion</h3>
         </Col>
       </Row>
+      <br/>
+      <Forms jsonfield={fieldSearchProyect} jsonform={jsonSearchProyect} jsonValidation={schemaSearchProyect} submit={ (valores, {resetForm}) => {
+            resetForm();
+            console.log(valores);                
+      }}/>
       <br/>
       <Row className="justify-content-center">
           <Table 

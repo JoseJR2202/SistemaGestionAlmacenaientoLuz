@@ -70,7 +70,7 @@ const form = ({jsonform, jsonfield, jsonValidation, submit})=>{
                     <form onSubmit={handleSubmit}>
                          <Row>
                             {items}
-                            <Col sm >
+                            <Col xs="auto" >
                                 <br/>
                                 <Button 
                                 variant="outline-primary"

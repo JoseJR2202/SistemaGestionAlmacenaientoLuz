@@ -1,8 +1,8 @@
 import React, {useMemo} from 'react'
-import { Table, ButtonToolbar, ButtonGroup, Button} from 'react-bootstrap';
+import { Table, ButtonToolbar, ButtonGroup, Button, SplitButton, Dropdown} from 'react-bootstrap';
 import { useTable, usePagination } from "react-table";
 
-const TableContend=({head, contend, pagination})=>{
+const TableContend=({head, contend, pagination, button, onClickButton})=>{
 
     const data= useMemo(()=>contend,[contend]);
     const columns= useMemo(()=>head,[head]);
@@ -50,9 +50,26 @@ const TableContend=({head, contend, pagination})=>{
                             <tr {...row.getRowProps({
                             onClick:()=>{console.log(row.original.id)}
                             })}>
-                            {row.cells.map(cell => {
+                            {row.cells.map((cell) => {
                               return <td {...cell.getCellProps()} >{cell.render('Cell')}</td>
                             })}
+                            {
+                                button?
+                                <>
+                                <td>
+                                    <SplitButton
+                                    key={i}
+                                    variant={"Secodary"}
+                                    title={button.title? button.title: button.options[0]}>
+                                        {button.options.map((option, index)=>{
+                                            return <Dropdown.Item key={index} eventKey={index}>{option}</Dropdown.Item>
+                                        })}
+                                    </SplitButton>
+                                </td>
+                                </>
+                                :<></>
+                            }
+                            
                           </tr>
                         )
                       })}

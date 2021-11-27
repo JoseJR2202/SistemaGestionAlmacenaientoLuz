@@ -13,8 +13,11 @@ import PublicInvestigation from './pages/investigation/publicResearch';
 import Login from './pages/user/login';
 import Home from './pages/home';
 import Profile from './pages/user/profile';
+import Mailbox from './pages/user/mailbox';
+import Request from './pages/user/requests';
 import Meetings from './pages/meetings/meetings';
 import CreateMeetings from './pages/meetings/createMeeting';
+import UpcomingMeetings from './pages/meetings/upcomingMeeting';
 import Error from './pages/error404';
 
 function App() {
@@ -53,6 +56,11 @@ function App() {
                 <CreateMeetings/>
               </PrivateRoute>
             }/>
+            <Route path="/reuniones/proximas" element={
+              <PrivateRoute>
+                <UpcomingMeetings/>
+              </PrivateRoute>
+            }/>
             <Route path="/investigaciones" element={
               <PrivateRoute>
                 <Investigation/>
@@ -66,6 +74,16 @@ function App() {
             <Route path="/perfil" element={
               <PrivateRoute>
                 <Profile/>
+              </PrivateRoute>
+            }/>
+            <Route path="/perfil/buzon" element={
+              <PrivateRoute>
+                <Mailbox/>
+              </PrivateRoute>
+            }/>
+            <Route path="/perfil/solicitudes" element={
+              <PrivateRoute>
+                <Request/>
               </PrivateRoute>
             }/>
             <Route path="*" element={<Error/>}/>
