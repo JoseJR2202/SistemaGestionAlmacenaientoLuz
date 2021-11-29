@@ -9,6 +9,7 @@ import {
   Navigate
 } from "react-router-dom";
 import Investigation from './pages/investigation/investigation';
+import DetailProyect from './pages/investigation/detailProyect';
 import PublicInvestigation from './pages/investigation/publicResearch';
 import Login from './pages/user/login';
 import Home from './pages/home';
@@ -17,6 +18,7 @@ import Mailbox from './pages/user/mailbox';
 import Request from './pages/user/requests';
 import Meetings from './pages/meetings/meetings';
 import CreateMeetings from './pages/meetings/createMeeting';
+import DetailMeetings from './pages/meetings/detailMeeting';
 import UpcomingMeetings from './pages/meetings/upcomingMeeting';
 import Error from './pages/error404';
 
@@ -61,6 +63,11 @@ function App() {
                 <UpcomingMeetings/>
               </PrivateRoute>
             }/>
+            <Route path="/reuniones/detail" element={
+              <PrivateRoute>
+                <DetailMeetings/>
+              </PrivateRoute>
+            }/>
             <Route path="/investigaciones" element={
               <PrivateRoute>
                 <Investigation/>
@@ -69,6 +76,11 @@ function App() {
             <Route path="/investigaciones/publicar" element={
               <PrivateRoute>
                 <PublicInvestigation/>
+              </PrivateRoute>
+            }/>
+            <Route path="/investigaciones/detail" element={
+              <PrivateRoute>
+                <DetailProyect/>
               </PrivateRoute>
             }/>
             <Route path="/perfil" element={

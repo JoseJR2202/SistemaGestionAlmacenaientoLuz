@@ -4,7 +4,7 @@ import Navbar from '../component/navBar'
 const error = () => {
   return (
     <div>
-      <Navbar/>
+      <Navbar stop={true}/>
       Pagina no encontrada
     </div>
   )

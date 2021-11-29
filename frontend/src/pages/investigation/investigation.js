@@ -9,8 +9,9 @@ import { fieldSearchProyect } from '../../schemas/schemaField';
 import { jsonSearchProyect } from '../../schemas/schemaForm';
 import { schemaSearchProyect } from '../../schemas/schemaValidation';
 import Forms from '../../component/form';
+// import { useNavigate } from "react-router-dom";
 
-const investigation = () => {
+const Investigation = () => {
   return (
     <Container fluid={true}>
       <Row>
@@ -63,4 +64,4 @@ const investigation = () => {
   )
 }
 
-export default investigation
+export default Investigation
