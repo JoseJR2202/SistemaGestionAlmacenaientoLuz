@@ -44,16 +44,16 @@ export const getProyectRecent=async (): Promise<string[]>=>{
 
 export const getProyectFilter= async({titulo, escuela, facultad}:{titulo:string, escuela:string, facultad:string}) =>{
     const client = await pool.connect();
-    console.log(queriesProyect.GET_PROYECT_FILTER.BEGINNING+(facultad!=''? queriesProyect.GET_PROYECT_FILTER.FILTERS.FACULTY:` WHERE `)+
-    (escuela!=''?queriesProyect.GET_PROYECT_FILTER.FILTERS.SCHOOL:` `)+
-    (titulo!=''?queriesProyect.GET_PROYECT_FILTER.FILTERS.TITLE:` `)+
-    queriesProyect.GET_PROYECT_FILTER.END)
+    const params:Object[]=[];
+    console.log(titulo?params.push(titulo):null);
+    console.log(escuela?params.push(escuela):null);
+    console.log(facultad?params.push(facultad):null);
     try {
       const response = (await client.query(
-          queriesProyect.GET_PROYECT_FILTER.BEGINNING+(facultad!=''? queriesProyect.GET_PROYECT_FILTER.FILTERS.FACULTY:` WHERE `)+
-          (escuela!=''?queriesProyect.GET_PROYECT_FILTER.FILTERS.SCHOOL:` `)+
-          (titulo!=''?queriesProyect.GET_PROYECT_FILTER.FILTERS.TITLE:` `)+
-          queriesProyect.GET_PROYECT_FILTER.END,[titulo?titulo:'.', escuela?escuela:'.', facultad?facultad:'.'])).rows;
+        queriesProyect.GET_PROYECT_FILTER.BEGINNING+(facultad!=''? `, facultad WHERE UPPER(facultad.nombre) like '%' || UPPER($${params.indexOf(facultad)+1}) || '%' AND facultad.id_facultad=escuela.id_facultad AND`:` WHERE `)+
+        (escuela!=''?` UPPER(escuela.nombre) like '%' || UPPER($${params.indexOf(escuela)+1}) || '%' AND `:` `)+
+        (titulo!=''?` UPPER(archivo.titulo) like '%' || UPPER($${params.indexOf(titulo)+1}) || '%' AND `:` `)+
+        queriesProyect.GET_PROYECT_FILTER.END,params)).rows;
       
       console.log(response)
       const proyects:proyectFilter[]=response.map((rows)=>{
@@ -64,6 +64,7 @@ export const getProyectFilter= async({titulo, escuela, facultad}:{titulo:string,
       })
       return proyects;
     } catch (e) {
+      console.log(e)
       throw e;
     } finally {
       client.release();

@@ -15,7 +15,7 @@ CREATE TABLE "tipo_usuario" (
 
 CREATE TABLE "archivo" (
   "id_archivo" SERIAL PRIMARY KEY,
-  "titulo" varchar NOT NULL,
+  "titulo" varchar NOT NULL, --Quizas sea necesario agregarle a restriccion UNIQUE para que los titulos no se repitan
   "descripcion" varchar,
   "fecha_publicacion" date NOT NULL,
   "url_archivo" varchar,

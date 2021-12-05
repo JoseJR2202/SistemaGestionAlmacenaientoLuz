@@ -51,15 +51,15 @@ const getProyectRecent = async () => {
 exports.getProyectRecent = getProyectRecent;
 const getProyectFilter = async ({ titulo, escuela, facultad }) => {
     const client = await pool.connect();
-    console.log(queries_1.queriesProyect.GET_PROYECT_FILTER.BEGINNING + (facultad != '' ? queries_1.queriesProyect.GET_PROYECT_FILTER.FILTERS.FACULTY : ` WHERE `) +
-        (escuela != '' ? queries_1.queriesProyect.GET_PROYECT_FILTER.FILTERS.SCHOOL : ` `) +
-        (titulo != '' ? queries_1.queriesProyect.GET_PROYECT_FILTER.FILTERS.TITLE : ` `) +
-        queries_1.queriesProyect.GET_PROYECT_FILTER.END);
+    const params = [];
+    console.log(titulo ? params.push(titulo) : null);
+    console.log(escuela ? params.push(escuela) : null);
+    console.log(facultad ? params.push(facultad) : null);
     try {
-        const response = (await client.query(queries_1.queriesProyect.GET_PROYECT_FILTER.BEGINNING + (facultad != '' ? queries_1.queriesProyect.GET_PROYECT_FILTER.FILTERS.FACULTY : ` WHERE `) +
-            (escuela != '' ? queries_1.queriesProyect.GET_PROYECT_FILTER.FILTERS.SCHOOL : ` `) +
-            (titulo != '' ? queries_1.queriesProyect.GET_PROYECT_FILTER.FILTERS.TITLE : ` `) +
-            queries_1.queriesProyect.GET_PROYECT_FILTER.END, [titulo ? titulo : '.', escuela ? escuela : '.', facultad ? facultad : '.'])).rows;
+        const response = (await client.query(queries_1.queriesProyect.GET_PROYECT_FILTER.BEGINNING + (facultad != '' ? `, facultad WHERE UPPER(facultad.nombre) like '%' || UPPER($${params.indexOf(facultad) + 1}) || '%' AND facultad.id_facultad=escuela.id_facultad AND` : ` WHERE `) +
+            (escuela != '' ? ` UPPER(escuela.nombre) like '%' || UPPER($${params.indexOf(escuela) + 1}) || '%' AND ` : ` `) +
+            (titulo != '' ? ` UPPER(archivo.titulo) like '%' || UPPER($${params.indexOf(titulo) + 1}) || '%' AND ` : ` `) +
+            queries_1.queriesProyect.GET_PROYECT_FILTER.END, params)).rows;
         console.log(response);
         const proyects = response.map((rows) => {
             return {
@@ -70,6 +70,7 @@ const getProyectFilter = async ({ titulo, escuela, facultad }) => {
         return proyects;
     }
     catch (e) {
+        console.log(e);
         throw e;
     }
     finally {

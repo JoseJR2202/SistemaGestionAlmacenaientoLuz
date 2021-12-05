@@ -12,15 +12,10 @@ exports.queriesProyect = {
     GET_PROYECTS_RECENT: `SELECT titulo FROM archivo ORDER BY fecha_publicacion ASC LIMIT 3`,
     GET_PROYECT_FILTER: {
         BEGINNING: `SELECT archivo.titulo as titulo, escuela.nombre as escuela FROM archivo, escuela, autor, usuario`,
-        FILTERS: {
-            TITLE: ` UPPER(archivo.titulo) like '%' || UPPER($1) || '%' AND `,
-            SCHOOL: ` UPPER(escuela.nombre) like '%' || UPPER($2) || '%' AND `,
-            FACULTY: `, facultad WHERE UPPER(facultad.nombre) like '%' || UPPER($3) || '%' AND facultad.id_facultad=escuela.id_facultad AND`
-        },
-        END: ` usuario.id_escuela=escuela.id_escuela AND usuario.cedula=autor.cedula AND autor.id_archivo=archivo.id_archivo ORDER BY archivo.fecha_publicacion ASC`
+        END: ` usuario.id_escuela=escuela.id_escuela AND usuario.cedula=autor.cedula AND autor.id_archivo=archivo.id_archivo and archivo.estado like 'Aprobado' ORDER BY archivo.fecha_publicacion ASC `
     },
     INSERT_PROYECT: `INSERT INTO archivo (titulo, descripcion, fecha_publicacion, estado) values($1,$2,now(),'Espera') RETURNING *`,
-    UPDATE_STATE_PROYECT: `UPDATE archivo SET estado = $1 WHERE id_archivo=$2 RETURNIGN *`,
+    UPDATE_STATE_PROYECT: `UPDATE archivo SET estado = $1 WHERE id_archivo=$2`,
     INSERT_AUTHORS: `INSERT INTO autor VALUES ($1, $2) RETURNING *`
 };
 //# sourceMappingURL=queries.js.map

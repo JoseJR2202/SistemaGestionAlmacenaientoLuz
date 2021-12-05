@@ -9,11 +9,6 @@ export declare const queriesProyect: {
     GET_PROYECTS_RECENT: string;
     GET_PROYECT_FILTER: {
         BEGINNING: string;
-        FILTERS: {
-            TITLE: string;
-            SCHOOL: string;
-            FACULTY: string;
-        };
         END: string;
     };
     INSERT_PROYECT: string;
