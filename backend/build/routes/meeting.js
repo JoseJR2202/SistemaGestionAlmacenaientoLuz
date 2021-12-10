@@ -1,6 +1,7 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 const express_1 = require("express");
+const fields_1 = require("@validations/fields");
 const meeting_1 = require("@helpers/meeting");
 const router = (0, express_1.Router)();
 router.get('/:id', async (req, res) => {
@@ -39,7 +40,7 @@ router.get('/comments/:id', async (req, res) => {
         res.status(500).json({ status: 500, error: e, message: 'Ocurrio un error en el servidor' });
     }
 });
-router.post('/filter', async (req, res) => {
+router.post('/filter', fields_1.searchMettingFieldsValidation, fields_1.checkResult, async (req, res) => {
     try {
         const { titulo, horario } = req.body;
         const data = await (0, meeting_1.getFilterMeeting)({ titulo: titulo, horario: horario });
@@ -49,7 +50,7 @@ router.post('/filter', async (req, res) => {
         res.status(500).json({ status: 500, error: e, message: 'Ocurrio un error en el servidor' });
     }
 });
-router.post('/filterParticipate', async (req, res) => {
+router.post('/filterParticipate', fields_1.searchMettingFieldsValidation, fields_1.checkResult, async (req, res) => {
     try {
         const { titulo, horario } = req.body;
         const data = await (0, meeting_1.getFilterMeetingParticipates)({ titulo: titulo, horario: horario, cedula: req.user.cedula });
@@ -59,7 +60,7 @@ router.post('/filterParticipate', async (req, res) => {
         res.status(500).json({ status: 500, error: e, message: 'Ocurrio un error en el servidor' });
     }
 });
-router.post('/insert', async (req, res) => {
+router.post('/', fields_1.mettingFieldsValidation, fields_1.checkResult, async (req, res) => {
     try {
         const { asunto, descripcion, fecha, invitados } = req.body;
         if (invitados.indexOf(req.user.cedula) < 0) {
@@ -87,6 +88,15 @@ router.post('/comments/:id', async (req, res) => {
         const { descripcion } = req.body;
         const data = await (0, meeting_1.commentMeeting)({ cedula: req.user.cedula, id: req.params.id, descripcion: descripcion });
         res.status(200).json({ status: 200, comment: data, message: 'comentario enviado' });
+    }
+    catch (e) {
+        res.status(500).json({ status: 500, error: e, message: 'Ocurrio un error en el servidor' });
+    }
+});
+router.post('/participates/:id', async (req, res) => {
+    try {
+        const data = await (0, meeting_1.insertParticipates)({ id: req.params.id, cedula: req.user.cedula });
+        res.status(200).json({ status: 200, meeting: data, message: 'agregado participante' });
     }
     catch (e) {
         res.status(500).json({ status: 500, error: e, message: 'Ocurrio un error en el servidor' });

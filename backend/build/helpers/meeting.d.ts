@@ -24,4 +24,8 @@ export declare const commentMeeting: ({ descripcion, id, cedula }: {
     id: number;
     cedula: number;
 }) => Promise<any>;
+export declare const insertParticipates: ({ id, cedula }: {
+    id: number;
+    cedula: number;
+}) => Promise<any>;
 //# sourceMappingURL=meeting.d.ts.map

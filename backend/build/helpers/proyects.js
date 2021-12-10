@@ -3,7 +3,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.commentProyect = exports.updateStateProyect = exports.insertProyect = exports.getProyectFilter = exports.getCommentProyect = exports.getProyectRecent = exports.getProyect = void 0;
+exports.updateUrlProyect = exports.commentProyect = exports.updateStateProyect = exports.insertProyect = exports.getProyectFilter = exports.getCommentProyect = exports.getProyectRecent = exports.getProyect = void 0;
 const pool_1 = __importDefault(require("@utils/pool"));
 const queries_1 = require("@utils/queries");
 const pool = pool_1.default.getInstance();
@@ -71,9 +71,9 @@ const getProyectFilter = async ({ titulo, escuela, facultad }) => {
     console.log(escuela ? params.push(escuela) : null);
     console.log(facultad ? params.push(facultad) : null);
     try {
-        const response = (await client.query(queries_1.queriesProyect.GET_PROYECT_FILTER.BEGINNING + (facultad != '' ? `, facultad WHERE UPPER(facultad.nombre) like '%' || UPPER($${params.indexOf(facultad) + 1}) || '%' AND facultad.id_facultad=escuela.id_facultad AND` : ` WHERE `) +
-            (escuela != '' ? ` UPPER(escuela.nombre) like '%' || UPPER($${params.indexOf(escuela) + 1}) || '%' AND ` : ` `) +
-            (titulo != '' ? ` UPPER(archivo.titulo) like '%' || UPPER($${params.indexOf(titulo) + 1}) || '%' AND ` : ` `) +
+        const response = (await client.query(queries_1.queriesProyect.GET_PROYECT_FILTER.BEGINNING + (facultad ? `, facultad WHERE UPPER(facultad.nombre) like '%' || UPPER($${params.indexOf(facultad) + 1}) || '%' AND facultad.id_facultad=escuela.id_facultad AND` : ` WHERE `) +
+            (escuela ? ` UPPER(escuela.nombre) like '%' || UPPER($${params.indexOf(escuela) + 1}) || '%' AND ` : ` `) +
+            (titulo ? ` UPPER(archivo.titulo) like '%' || UPPER($${params.indexOf(titulo) + 1}) || '%' AND ` : ` `) +
             queries_1.queriesProyect.GET_PROYECT_FILTER.END, params)).rows;
         console.log(response);
         const proyects = response.map((rows) => {
@@ -157,4 +157,23 @@ const commentProyect = async ({ descripcion, id, cedula }) => {
     }
 };
 exports.commentProyect = commentProyect;
+const updateUrlProyect = async ({ id, url }) => {
+    const client = await pool.connect();
+    try {
+        await client.query('BEGIN');
+        const response = (await client.query(queries_1.queriesProyect.UPDATE_URL_PROYECT, [url, id])).rows[0];
+        console.log(response);
+        await client.query('COMMIT');
+        return response;
+    }
+    catch (e) {
+        await client.query('ROLLBACK');
+        console.log(e);
+        throw e;
+    }
+    finally {
+        client.release();
+    }
+};
+exports.updateUrlProyect = updateUrlProyect;
 //# sourceMappingURL=proyects.js.map

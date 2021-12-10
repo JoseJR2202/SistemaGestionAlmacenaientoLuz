@@ -63,9 +63,9 @@ export const getProyectFilter= async({titulo, escuela, facultad}:{titulo:string,
     console.log(facultad?params.push(facultad):null);
     try {
       const response = (await client.query(
-        queriesProyect.GET_PROYECT_FILTER.BEGINNING+(facultad!=''? `, facultad WHERE UPPER(facultad.nombre) like '%' || UPPER($${params.indexOf(facultad)+1}) || '%' AND facultad.id_facultad=escuela.id_facultad AND`:` WHERE `)+
-        (escuela!=''?` UPPER(escuela.nombre) like '%' || UPPER($${params.indexOf(escuela)+1}) || '%' AND `:` `)+
-        (titulo!=''?` UPPER(archivo.titulo) like '%' || UPPER($${params.indexOf(titulo)+1}) || '%' AND `:` `)+
+        queriesProyect.GET_PROYECT_FILTER.BEGINNING+(facultad? `, facultad WHERE UPPER(facultad.nombre) like '%' || UPPER($${params.indexOf(facultad)+1}) || '%' AND facultad.id_facultad=escuela.id_facultad AND`:` WHERE `)+
+        (escuela?` UPPER(escuela.nombre) like '%' || UPPER($${params.indexOf(escuela)+1}) || '%' AND `:` `)+
+        (titulo?` UPPER(archivo.titulo) like '%' || UPPER($${params.indexOf(titulo)+1}) || '%' AND `:` `)+
         queriesProyect.GET_PROYECT_FILTER.END,params)).rows;
       
       console.log(response)
@@ -130,6 +130,23 @@ export const commentProyect = async ({descripcion, id, cedula}:{descripcion:stri
   try {
     await client.query('BEGIN');
     const response = (await client.query(queriesProyect.COMMENT_PROYECT,[descripcion,id, cedula])).rows[0]; 
+    console.log(response);
+    await client.query('COMMIT');
+    return response;
+  } catch (e) {
+    await client.query('ROLLBACK');
+    console.log(e);
+    throw e;
+  } finally {
+    client.release();
+  }
+};
+
+export const updateUrlProyect = async({id, url}:{id:number, url:string}):Promise<boolean>=>{
+  const client = await pool.connect();
+  try {
+    await client.query('BEGIN');
+    const response = (await client.query(queriesProyect.UPDATE_URL_PROYECT,[url,id])).rows[0]; 
     console.log(response);
     await client.query('COMMIT');
     return response;

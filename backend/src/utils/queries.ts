@@ -16,7 +16,8 @@ export const queriesProyect = {
   INSERT_PROYECT:`INSERT INTO archivo (titulo, descripcion, fecha_publicacion, estado) values($1,$2,now(),'Espera') RETURNING *`,
   UPDATE_STATE_PROYECT:`UPDATE archivo SET estado = $1 WHERE id_archivo=$2`,
   INSERT_AUTHORS:`INSERT INTO autor VALUES ($1, $2) RETURNING *`,
-  COMMENT_PROYECT:`INSERT INTO nota_archivo (contenido, id_archivo, cedula) VALUES ($1, $2, $3) RETURNING *`
+  COMMENT_PROYECT:`INSERT INTO nota_archivo (contenido, id_archivo, cedula) VALUES ($1, $2, $3) RETURNING *`,
+  UPDATE_URL_PROYECT:`UPDATE archivo SET url_archivo = $1 WHERE id_archivo = $2`
 };
 
 export const queriesMeeting = {

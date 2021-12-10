@@ -83,10 +83,10 @@ export const getFilterMeeting= async({titulo, horario}:{titulo:string, horario:s
       const params:Object[]=[];
       console.log(titulo?params.push(titulo):null);
       console.log(horario?params.push(horario):null);
-      console.log(queriesMeeting.GET_MEETING_FILTER.BEGINNING + (titulo!=''?` AND UPPER(asunto) LIKE '%' || UPPER($${params.indexOf(titulo)+1}) || '%' `:` `)
-      + (horario!=''?` AND fecha_inicio::date = $${params.indexOf(horario)+1} `:` `)+ queriesMeeting.GET_MEETING_FILTER.END)
-      const response = (await client.query(queriesMeeting.GET_MEETING_FILTER.BEGINNING + (titulo!=''?` AND UPPER(asunto) LIKE '%' || UPPER($${params.indexOf(titulo)+1}) || '%' `:` `)
-                        + (horario!=''?` AND fecha_inicio::date = $${params.indexOf(horario)+1}`:` `)+ queriesMeeting.GET_MEETING_FILTER.END, params)).rows;
+      console.log(queriesMeeting.GET_MEETING_FILTER.BEGINNING + (titulo?` AND UPPER(asunto) LIKE '%' || UPPER($${params.indexOf(titulo)+1}) || '%' `:` `)
+      + (horario?` AND fecha_inicio::date = $${params.indexOf(horario)+1} `:` `)+ queriesMeeting.GET_MEETING_FILTER.END)
+      const response = (await client.query(queriesMeeting.GET_MEETING_FILTER.BEGINNING + (titulo?` AND UPPER(asunto) LIKE '%' || UPPER($${params.indexOf(titulo)+1}) || '%' `:` `)
+                        + (horario?` AND fecha_inicio::date = $${params.indexOf(horario)+1}`:` `)+ queriesMeeting.GET_MEETING_FILTER.END, params)).rows;
       return response;
     } catch (e) {
       console.log(e)
@@ -103,10 +103,10 @@ export const getFilterMeetingParticipates= async({titulo, horario, cedula}:{titu
     const params:Object[]=[cedula];
     console.log(titulo?params.push(titulo):null);
     console.log(horario?params.push(horario):null);
-    console.log(queriesMeeting.GET_MEETING_FILTER_PARTICIPATES.BEGINNING + (titulo!=''?` AND UPPER(asunto) LIKE '%' || UPPER($${params.indexOf(titulo)+1}) || '%' AND `:``) 
-    + (horario!=''?` AND fecha_inicio::date = $${params.indexOf(horario)+1}`:` `)+ queriesMeeting.GET_MEETING_FILTER_PARTICIPATES.END) 
-    const response = (await client.query(queriesMeeting.GET_MEETING_FILTER_PARTICIPATES.BEGINNING + (titulo!=''?` AND UPPER(asunto) LIKE '%' || UPPER($${params.indexOf(titulo)+1}) || '%' AND `:``) 
-                      + (horario!=''?` AND fecha_inicio::date = $${params.indexOf(horario)+1}`:` `)+ queriesMeeting.GET_MEETING_FILTER_PARTICIPATES.END, params)).rows;
+    console.log(queriesMeeting.GET_MEETING_FILTER_PARTICIPATES.BEGINNING + (titulo?` AND UPPER(asunto) LIKE '%' || UPPER($${params.indexOf(titulo)+1}) || '%' AND `:``) 
+    + (horario?` AND fecha_inicio::date = $${params.indexOf(horario)+1}`:` `)+ queriesMeeting.GET_MEETING_FILTER_PARTICIPATES.END) 
+    const response = (await client.query(queriesMeeting.GET_MEETING_FILTER_PARTICIPATES.BEGINNING + (titulo?` AND UPPER(asunto) LIKE '%' || UPPER($${params.indexOf(titulo)+1}) || '%' `:``) 
+                      + (horario?` AND fecha_inicio::date = $${params.indexOf(horario)+1}`:` `)+ queriesMeeting.GET_MEETING_FILTER_PARTICIPATES.END, params)).rows;
     console.log(response)
     return response;
   } catch (e) {
@@ -175,4 +175,21 @@ export const commentMeeting = async ({descripcion, id, cedula}:{descripcion:stri
   } finally {
     client.release();
   }
+};
+
+export const insertParticipates = async({id, cedula}:{id:number, cedula:number})=>{
+  const client = await pool.connect();
+  try {
+    await client.query('BEGIN');
+    const response = (await client.query(queriesMeeting.INSERT_PARTICIPATES_MEETING,[id, cedula])).rows[0]; 
+    console.log(response)
+    await client.query('COMMIT');
+    return response;
+  } catch (e) {
+    await client.query('ROLLBACK');
+    console.log(e)
+    throw e;
+  } finally {
+    client.release();
+  } 
 }

@@ -21,4 +21,8 @@ export declare const commentProyect: ({ descripcion, id, cedula }: {
     id: number;
     cedula: number;
 }) => Promise<any>;
+export declare const updateUrlProyect: ({ id, url }: {
+    id: number;
+    url: string;
+}) => Promise<boolean>;
 //# sourceMappingURL=proyects.d.ts.map

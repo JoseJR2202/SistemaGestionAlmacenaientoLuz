@@ -16,6 +16,7 @@ export declare const queriesProyect: {
     UPDATE_STATE_PROYECT: string;
     INSERT_AUTHORS: string;
     COMMENT_PROYECT: string;
+    UPDATE_URL_PROYECT: string;
 };
 export declare const queriesMeeting: {
     GET_MEETING: string;

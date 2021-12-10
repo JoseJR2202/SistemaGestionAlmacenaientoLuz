@@ -1,7 +1,14 @@
 "use strict";
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 const express_1 = require("express");
+const fields_1 = require("@validations/fields");
 const proyects_1 = require("@helpers/proyects");
+const multer_1 = __importDefault(require("multer"));
+const multer_2 = __importDefault(require("@utils/multer"));
+const uploads = (0, multer_1.default)(multer_2.default);
 const router = (0, express_1.Router)();
 router.get('/recent', async (req, res) => {
     try {
@@ -30,7 +37,7 @@ router.get('/comments/:id', async (req, res) => {
         res.status(500).json({ status: 500, error: e, message: 'Ocurrio un error en el servidor' });
     }
 });
-router.post('/filter', async (req, res) => {
+router.post('/filter', fields_1.searchProyectFieldsValidation, fields_1.checkResult, async (req, res) => {
     try {
         const { titulo, escuela, facultad } = req.body;
         console.log(titulo, escuela, facultad);
@@ -41,10 +48,10 @@ router.post('/filter', async (req, res) => {
         res.status(500).json({ status: 500, error: e, message: 'ocurrio un error en el servidor' });
     }
 });
-router.post('/', async (req, res) => {
+router.post('/', fields_1.proyectFieldsValidation, fields_1.checkResult, async (req, res) => {
     try {
-        const { titulo, descripcion, autor } = req.body;
-        const data = await (0, proyects_1.insertProyect)({ titulo: titulo, descripcion: descripcion, autor: autor });
+        const { titulo, descripcion, autores } = req.body;
+        const data = await (0, proyects_1.insertProyect)({ titulo: titulo, descripcion: descripcion, autor: autores });
         res.status(200).json({ status: 200, proyecto: data, message: 'Proyecto agregado correctamente' });
     }
     catch (e) {
@@ -66,6 +73,18 @@ router.post('/comments/:id', async (req, res) => {
         const { descripcion } = req.body;
         const data = await (0, proyects_1.commentProyect)({ cedula: req.user.cedula, id: req.params.id, descripcion: descripcion });
         res.status(200).json({ status: 200, comment: data, message: 'comentario enviado' });
+    }
+    catch (e) {
+        res.status(500).json({ status: 500, error: e, message: 'Ocurrio un error en el servidor' });
+    }
+});
+router.put('/:id', uploads.single('file'), async (req, res) => {
+    try {
+        const resultado = await (0, proyects_1.updateUrlProyect)({
+            url: req.file?.filename,
+            id: +req.params.id
+        });
+        res.status(200).json({ status: 200, resultado: resultado, message: 'proyecto actualizado correctamente' });
     }
     catch (e) {
         res.status(500).json({ status: 500, error: e, message: 'Ocurrio un error en el servidor' });

@@ -1,7 +1,7 @@
 import { Router } from 'express';
-// import { loginFieldsValidation, checkResult } from '@validations/fields';
+import { mettingFieldsValidation, searchMettingFieldsValidation, checkResult } from '@validations/fields';
 import { listMeeting, meeting } from '@interfaces/Meeting';
-import { getMeeting, getCommentsMeeting, getFilterMeeting, getFilterMeetingParticipates, getLastMeeting, getRecentMeeting, insertMeeting, commentMeeting, culminateMeeting } from '@helpers/meeting';
+import { getMeeting, getCommentsMeeting, getFilterMeeting, getFilterMeetingParticipates, getLastMeeting, getRecentMeeting, insertMeeting, commentMeeting, culminateMeeting, insertParticipates } from '@helpers/meeting';
 
 const router = Router();
 
@@ -41,7 +41,7 @@ router.get('/comments/:id', async(req, res)=>{
     }
 });
 
-router.post('/filter', async(req, res)=>{
+router.post('/filter', searchMettingFieldsValidation, checkResult, async(req, res)=>{
     try {
         const {titulo, horario}= req.body;
         const data= await getFilterMeeting({titulo:titulo, horario:horario});
@@ -51,7 +51,7 @@ router.post('/filter', async(req, res)=>{
     }
 });
 
-router.post('/filterParticipate', async(req:any, res)=>{
+router.post('/filterParticipate', searchMettingFieldsValidation, checkResult, async(req:any, res)=>{
     try {
         const {titulo, horario}= req.body;
         const data= await getFilterMeetingParticipates({titulo:titulo, horario:horario, cedula:req.user.cedula});
@@ -61,7 +61,7 @@ router.post('/filterParticipate', async(req:any, res)=>{
     }
 });
 
-router.post('/insert', async(req:any, res)=>{
+router.post('/', mettingFieldsValidation, checkResult, async(req:any, res)=>{
     try {
         const {asunto, descripcion, fecha, invitados}= req.body;
         if(invitados.indexOf(req.user.cedula)<0){
@@ -88,6 +88,15 @@ router.post('/comments/:id', async(req:any, res)=>{
         const {descripcion}= req.body;
         const data= await commentMeeting({cedula:req.user.cedula, id:req.params.id, descripcion:descripcion});
         res.status(200).json({ status: 200, comment: data, message: 'comentario enviado' });
+    } catch (e) {
+        res.status(500).json({ status: 500, error: e, message: 'Ocurrio un error en el servidor' });
+    }
+});
+
+router.post('/participates/:id', async(req:any, res)=>{
+    try {
+        const data:boolean= await insertParticipates({id:req.params.id, cedula:req.user.cedula});
+        res.status(200).json({ status: 200, meeting: data, message: 'agregado participante' });
     } catch (e) {
         res.status(500).json({ status: 500, error: e, message: 'Ocurrio un error en el servidor' });
     }
