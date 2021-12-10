@@ -3,7 +3,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.updateStateProyect = exports.insertProyect = exports.getProyectFilter = exports.getProyectRecent = exports.getProyect = void 0;
+exports.commentProyect = exports.updateStateProyect = exports.insertProyect = exports.getProyectFilter = exports.getCommentProyect = exports.getProyectRecent = exports.getProyect = void 0;
 const pool_1 = __importDefault(require("@utils/pool"));
 const queries_1 = require("@utils/queries");
 const pool = pool_1.default.getInstance();
@@ -49,6 +49,21 @@ const getProyectRecent = async () => {
     }
 };
 exports.getProyectRecent = getProyectRecent;
+const getCommentProyect = async (id) => {
+    const client = await pool.connect();
+    try {
+        const response = (await client.query(queries_1.queriesProyect.GET_COMMENTS_PROYECTS, [id])).rows;
+        console.log(response);
+        return response;
+    }
+    catch (e) {
+        throw e;
+    }
+    finally {
+        client.release();
+    }
+};
+exports.getCommentProyect = getCommentProyect;
 const getProyectFilter = async ({ titulo, escuela, facultad }) => {
     const client = await pool.connect();
     const params = [];
@@ -81,10 +96,11 @@ exports.getProyectFilter = getProyectFilter;
 const insertProyect = async ({ titulo, descripcion, autor }) => {
     const client = await pool.connect();
     try {
+        await client.query('BEGIN');
         const response = (await client.query(queries_1.queriesProyect.INSERT_PROYECT, [titulo, descripcion])).rows[0];
         console.log(response);
-        const response2 = autor.map(async (rows) => {
-            return (await client.query(queries_1.queriesProyect.INSERT_AUTHORS, [response.id_archivo, rows]));
+        const response2 = await autor.map((rows) => {
+            return (client.query(queries_1.queriesProyect.INSERT_AUTHORS, [response.id_archivo, rows]));
         });
         console.log(response2);
         const proyects = {
@@ -92,9 +108,11 @@ const insertProyect = async ({ titulo, descripcion, autor }) => {
             fecha_publicacion: response.fecha_publicacion,
             descripcion: response.descripcion
         };
+        await client.query('COMMIT');
         return proyects;
     }
     catch (e) {
+        await client.query('ROLLBACK');
         throw e;
     }
     finally {
@@ -105,16 +123,38 @@ exports.insertProyect = insertProyect;
 const updateStateProyect = async ({ id, estado }) => {
     const client = await pool.connect();
     try {
+        await client.query('BEGIN');
         const response = (await client.query(queries_1.queriesProyect.UPDATE_STATE_PROYECT, [estado, id])).rowCount > 0;
         console.log(response);
+        await client.query('COMMIT');
         return response;
     }
     catch (e) {
         throw e;
     }
     finally {
+        await client.query('ROLLBACK');
         client.release();
     }
 };
 exports.updateStateProyect = updateStateProyect;
+const commentProyect = async ({ descripcion, id, cedula }) => {
+    const client = await pool.connect();
+    try {
+        await client.query('BEGIN');
+        const response = (await client.query(queries_1.queriesProyect.COMMENT_PROYECT, [descripcion, id, cedula])).rows[0];
+        console.log(response);
+        await client.query('COMMIT');
+        return response;
+    }
+    catch (e) {
+        await client.query('ROLLBACK');
+        console.log(e);
+        throw e;
+    }
+    finally {
+        client.release();
+    }
+};
+exports.commentProyect = commentProyect;
 //# sourceMappingURL=proyects.js.map

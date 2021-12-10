@@ -49,9 +49,9 @@ CREATE TABLE "reunion" (
   "asunto" varchar NOT NULL,
   "descripcion" varchar,
   "fecha_inicio" timestamp NOT NULL,
-  "fecha_fin" timestamp NOT NULL,
-  "cant_participantes" integer NOT NULL,
-  "estado" char NOT NULL
+  "fecha_fin" timestamp,
+  "cant_participantes" integer DEFAULT 0, --Realizar Trigger,
+  "estado" varchar NOT NULL DEFAULT 'Espere' --E: Espera. C: Culminado
 );
 
 CREATE TABLE "participante" (
@@ -87,8 +87,7 @@ CREATE TABLE "archivo_escuela" (
   PRIMARY KEY ("id_archivo", "id_escuela")
 );
 
-ALTER TABLE "usuario" ADD FOREIGN KEY ("id_tipo_usuario") REFERENCES "tipo_usuario" ("id_tipo_usuario") on delete no action 
-on update cascade;
+ALTER TABLE "usuario" ADD FOREIGN KEY ("id_tipo_usuario") REFERENCES "tipo_usuario" ("id_tipo_usuario") on delete no action on update cascade;
 
 ALTER TABLE "usuario" ADD FOREIGN KEY ("id_escuela") REFERENCES "escuela" ("id_escuela") on delete set null on update cascade;
 
@@ -118,3 +117,15 @@ ALTER TABLE "archivo_escuela" ADD FOREIGN KEY ("id_archivo") REFERENCES "archivo
 ALTER TABLE "archivo_escuela" ADD FOREIGN KEY ("id_escuela") REFERENCES "escuela" ("id_escuela") on update cascade on delete cascade;
 
 ALTER TABLE "escuela" ADD FOREIGN KEY ("id_facultad") REFERENCES "facultad" ("id_facultad") on delete no action on update cascade;
+
+--Functions and Triggers
+
+CREATE OR REPLACE FUNCTION update_participantes() RETURNS TRIGGER AS $updateParticipantes$
+   BEGIN
+      UPDATE reunion SET cant_participantes = (SELECT cant_participantes + 1 FROM reunion WHERE id_reunion = new.id_reunion) WHERE id_reunion=new.id_reunion;
+	RETURN NEW;
+   END;
+$updateParticipantes$ LANGUAGE plpgsql;
+
+CREATE TRIGGER updateCantParticipantes AFTER INSERT ON participante
+FOR EACH ROW EXECUTE PROCEDURE update_participantes();

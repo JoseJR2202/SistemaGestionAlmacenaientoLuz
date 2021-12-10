@@ -11,8 +11,28 @@ export declare const queriesProyect: {
         BEGINNING: string;
         END: string;
     };
+    GET_COMMENTS_PROYECTS: string;
     INSERT_PROYECT: string;
     UPDATE_STATE_PROYECT: string;
     INSERT_AUTHORS: string;
+    COMMENT_PROYECT: string;
+};
+export declare const queriesMeeting: {
+    GET_MEETING: string;
+    GET_LAST_MEETING: string;
+    GET_RECENT_MEETING: string;
+    GET_MEETING_FILTER: {
+        BEGINNING: string;
+        END: string;
+    };
+    GET_MEETING_FILTER_PARTICIPATES: {
+        BEGINNING: string;
+        END: string;
+    };
+    GET_COMMENTS_MEETING: string;
+    INSERT_MEETING: string;
+    CULMINATE_MEETING: string;
+    INSERT_PARTICIPATES_MEETING: string;
+    COMMENT_MEETIG: string;
 };
 //# sourceMappingURL=queries.d.ts.map

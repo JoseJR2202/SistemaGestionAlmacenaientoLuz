@@ -22,7 +22,7 @@ export const mettingFieldsValidation=[
   check('asunto').notEmpty({ ignore_whitespace: true }).withMessage('Falta un Asunto').isString().isLength({min:10, max:300}).withMessage("Debe tener entre 10 a 300 caracteres"),
   check('fecha').notEmpty({ ignore_whitespace: true }).withMessage('Falta una fecha').isDate().withMessage('Debe ser una fecha'),
   check('hora').notEmpty({ ignore_whitespace: true }).withMessage('Falta una hora'),
-  check('invitados').notEmpty({ ignore_whitespace: true }).withMessage('Faltan los invitados'),
+  check('invitados').optional().notEmpty({ ignore_whitespace: true }).isArray().isNumeric().withMessage('Debr colocar las cedulas'),
   check('descripcion').notEmpty({ ignore_whitespace: true }).withMessage('Faltan una descripcion').isString().isLength({min:20, max:2000}).withMessage("Debe tener entre 20 a 2000 caracteres")
 ];
 

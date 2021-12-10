@@ -4,6 +4,11 @@ export interface meeting{
     descripcion:string,
     fecha_inicio:string,
     fecha_fin?:string,
-    participantes?:number,
+    participantes?:number[],
     estado?:string
+}
+
+export interface listMeeting{
+    asunto:string,
+    fecha:string
 }

@@ -42,6 +42,19 @@ export const getProyectRecent=async (): Promise<string[]>=>{
     }
 };
 
+export const getCommentProyect=async (id:number)=>{
+  const client = await pool.connect();
+  try {
+    const response = (await client.query(queriesProyect.GET_COMMENTS_PROYECTS, [id])).rows;
+    console.log(response)
+    return response;
+  } catch (e) {
+    throw e;
+  } finally {
+    client.release();
+  }
+};
+
 export const getProyectFilter= async({titulo, escuela, facultad}:{titulo:string, escuela:string, facultad:string}) =>{
     const client = await pool.connect();
     const params:Object[]=[];
@@ -74,10 +87,11 @@ export const getProyectFilter= async({titulo, escuela, facultad}:{titulo:string,
 export const insertProyect=async({titulo, descripcion, autor}:{ titulo:string, descripcion:string, autor:number[]}):Promise<proyect>=>{
     const client = await pool.connect();
     try {
+      await client.query('BEGIN');
       const response = (await client.query(queriesProyect.INSERT_PROYECT,[titulo, descripcion])).rows[0]; 
       console.log(response)
-      const response2= autor.map(async (rows)=>{
-        return  (await client.query(queriesProyect.INSERT_AUTHORS,[response.id_archivo,rows]))
+      const response2= await autor.map((rows)=>{
+        return (client.query(queriesProyect.INSERT_AUTHORS,[response.id_archivo,rows]))
       })
       console.log(response2)
       const proyects:proyect={
@@ -85,8 +99,10 @@ export const insertProyect=async({titulo, descripcion, autor}:{ titulo:string, d
           fecha_publicacion:response.fecha_publicacion,
           descripcion:response.descripcion
       }
+      await client.query('COMMIT');
       return proyects;
     } catch (e) {
+      await client.query('ROLLBACK');
       throw e;
     } finally {
       client.release();
@@ -96,12 +112,32 @@ export const insertProyect=async({titulo, descripcion, autor}:{ titulo:string, d
 export const updateStateProyect=async({id, estado}:{id:number, estado:string}): Promise<boolean>=>{
     const client = await pool.connect();
     try {
+      await client.query('BEGIN');
       const response = (await client.query(queriesProyect.UPDATE_STATE_PROYECT,[estado, id])).rowCount>0; 
       console.log(response)
+      await client.query('COMMIT');
       return response;
     } catch (e) {
       throw e;
     } finally {
+      await client.query('ROLLBACK');
       client.release();
     }
 };
+
+export const commentProyect = async ({descripcion, id, cedula}:{descripcion:string, id:number, cedula:number}) => {
+  const client = await pool.connect();
+  try {
+    await client.query('BEGIN');
+    const response = (await client.query(queriesProyect.COMMENT_PROYECT,[descripcion,id, cedula])).rows[0]; 
+    console.log(response);
+    await client.query('COMMIT');
+    return response;
+  } catch (e) {
+    await client.query('ROLLBACK');
+    console.log(e);
+    throw e;
+  } finally {
+    client.release();
+  }
+}
