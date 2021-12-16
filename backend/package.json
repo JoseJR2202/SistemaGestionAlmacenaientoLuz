@@ -5,6 +5,7 @@
   "main": "index.js",
   "scripts": {
     "start": "tsc && node build/server.js",
+    "heroku-postbuild": "cd ../front && npm install && npm run build",
     "start:debug": "node --inspect=5858 -r ts-node/register -r tsconfig-paths/register src/index.ts",
     "dev": "nodemon --watch 'src/**/*.ts' --exec \"ts-node\" src/server.ts",
     "build": "tsc",

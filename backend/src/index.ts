@@ -1,4 +1,5 @@
 import './config/alias'
+import path from 'path';
 import express from 'express';
 import cors from 'cors';
 import routes from './routes';
@@ -8,7 +9,8 @@ import { LocalStrategy } from '@utils/strategies';
 
 const app = express();
 
-app.use('/views', express.static(__dirname + '/uploads'));
+app.use('/files', express.static(__dirname + '/uploads'));
+app.use(express.static(path.resolve('..','front','build')))
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(
@@ -20,10 +22,6 @@ app.use(
 );
 
 app.use(cors());
-
-app.get('/', (req, res) => {
-  res.send('hi, estas en el inicio');
-});
 
 passport.use(LocalStrategy);
 
@@ -39,6 +37,10 @@ app.use(passport.initialize());
 
 app.use(passport.session());
 
-app.use('/', routes);
+app.use('/api', routes);
+
+app.get('*', (req, res) => {
+  res.sendFile(path.resolve('..','front','build','index.html'))
+});
 
 export default app;
