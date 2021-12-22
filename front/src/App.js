@@ -78,7 +78,7 @@ function App() {
                 <PublicInvestigation/>
               </PrivateRoute>
             }/>
-            <Route path="/investigaciones/detail" element={
+            <Route path="/investigaciones/detail/:id" element={
               <PrivateRoute>
                 <DetailProyect/>
               </PrivateRoute>

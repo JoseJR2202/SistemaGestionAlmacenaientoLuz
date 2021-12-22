@@ -55,6 +55,44 @@ export const getCommentProyect=async (id:number)=>{
   }
 };
 
+export const getCommentsUser= async(CI:number)=>{
+  const client = await pool.connect();
+  try {
+    const response = (await client.query(queriesProyect.GET_COMMENT_USER, [CI])).rows;
+    console.log(response)
+    let result:any[]=[];
+    const flags:number[]=[];
+    response.forEach((row, index)=>{
+      if(!flags.includes(row.id)){
+        flags.push(row.id);
+        result.push({
+          id:row.id,
+          titulo:row.titulo,
+          escuela:row.escuela
+        })
+      }
+      else {
+        result=result.map((rows)=>{
+          if(row.id===rows.id){
+            return({
+              id:rows.id,
+              titulo:rows.titulo,
+              escuela:rows.escuela + ' / '+row.escuela
+            })
+          }
+          return rows;
+        })
+      }
+    });
+    return result;
+  } catch (e) {
+    console.log(e)
+    throw e;
+  } finally {
+    client.release();
+  }
+}
+
 export const getProyectFilter= async({titulo, escuela, facultad}:{titulo:string, escuela:string, facultad:string}) =>{
     const client = await pool.connect();
     const params:Object[]=[];

@@ -2,6 +2,7 @@ import { proyect, detailProyect, proyectFilter } from '@interfaces/Proyect';
 export declare const getProyect: (id: number) => Promise<detailProyect>;
 export declare const getProyectRecent: () => Promise<string[]>;
 export declare const getCommentProyect: (id: number) => Promise<any[]>;
+export declare const getCommentsUser: (CI: number) => Promise<any[]>;
 export declare const getProyectFilter: ({ titulo, escuela, facultad }: {
     titulo: string;
     escuela: string;

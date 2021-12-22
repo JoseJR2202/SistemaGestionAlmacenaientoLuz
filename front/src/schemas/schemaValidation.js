@@ -18,8 +18,7 @@ export const schemaChangeKey= Yup.object().shape({
     .max(30, "la clave debe tener minimo 30 caracteres"),
     confirmarClave: Yup.string()
     .required("Este campo es requerido")
-    .min(7, "la clave debe tener minimo 5 caracteres")
-    .max(30, "la clave debe tener minimo 30 caracteres"),
+    .oneOf([Yup.ref('clave')], 'Las claves no coinciden')
 });
 
 export const schemaProyect= Yup.object().shape({

@@ -19,7 +19,8 @@ const getUserById = async (cedula) => {
             correo: response.correo,
             clave: response.contrasenia,
             tipo_usuario: response.tipousuario,
-            escuela: response.escuela
+            escuela: response.escuela,
+            facultad: response.facultad
         };
         return users;
     }

@@ -3,7 +3,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.updateUrlProyect = exports.commentProyect = exports.updateStateProyect = exports.insertProyect = exports.getProyectFilter = exports.getCommentProyect = exports.getProyectRecent = exports.getProyect = void 0;
+exports.updateUrlProyect = exports.commentProyect = exports.updateStateProyect = exports.insertProyect = exports.getProyectFilter = exports.getCommentsUser = exports.getCommentProyect = exports.getProyectRecent = exports.getProyect = void 0;
 const pool_1 = __importDefault(require("@utils/pool"));
 const queries_1 = require("@utils/queries");
 const pool = pool_1.default.getInstance();
@@ -64,6 +64,46 @@ const getCommentProyect = async (id) => {
     }
 };
 exports.getCommentProyect = getCommentProyect;
+const getCommentsUser = async (CI) => {
+    const client = await pool.connect();
+    try {
+        const response = (await client.query(queries_1.queriesProyect.GET_COMMENT_USER, [CI])).rows;
+        console.log(response);
+        let result = [];
+        const flags = [];
+        response.forEach((row, index) => {
+            if (!flags.includes(row.id)) {
+                flags.push(row.id);
+                result.push({
+                    id: row.id,
+                    titulo: row.titulo,
+                    escuela: row.escuela
+                });
+            }
+            else {
+                result = result.map((rows) => {
+                    if (row.id === rows.id) {
+                        return ({
+                            id: rows.id,
+                            titulo: rows.titulo,
+                            escuela: rows.escuela + ' / ' + row.escuela
+                        });
+                    }
+                    return rows;
+                });
+            }
+        });
+        return result;
+    }
+    catch (e) {
+        console.log(e);
+        throw e;
+    }
+    finally {
+        client.release();
+    }
+};
+exports.getCommentsUser = getCommentsUser;
 const getProyectFilter = async ({ titulo, escuela, facultad }) => {
     const client = await pool.connect();
     const params = [];

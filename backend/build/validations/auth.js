@@ -6,6 +6,7 @@ const isLogged = (req, res, next) => {
         res.send({
             status: 304,
             response: 'Ya existe una sesión',
+            type: req.user.tipo_usuario
         });
     }
     else {

@@ -48,7 +48,7 @@ const TableContend=({head, contend, pagination, button, onClickButton})=>{
                         prepareRow(row)
                         return (
                             <tr {...row.getRowProps({
-                            onClick:()=>{console.log(row.original.id)}
+                            onClick:()=>{onClickButton(row)}
                             })}>
                             {row.cells.map((cell) => {
                               return <td {...cell.getCellProps()} >{cell.render('Cell')}</td>

@@ -12,7 +12,8 @@ router.get('/', async (req, res) => {
             cedula: cedula,
             nombre: nombre,
             tipo_usuario: tipo_usuario,
-            escuela: escuela
+            escuela: escuela,
+            facultad: facultad
         };
         res.status(200).json({ status: 200, usuario: data, message: 'Perfil del usuario enviado' });
     }

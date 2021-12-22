@@ -1,29 +1,71 @@
-import React from 'react'
+import React,{useEffect, useState} from 'react'
 import Navbar from '../../component/navBar'
 import {Row, Col, Container, Button, Form, FloatingLabel} from 'react-bootstrap'
 import { ImFilePdf } from 'react-icons/im';
-import {FaDownload} from 'react-icons/fa'
-const detailProyect = () => {
+import {FaDownload} from 'react-icons/fa';
+import { useParams, useNavigate } from "react-router-dom";
+import {getDetailProyect} from '../../utils/proyects.comm';
+
+const DetailProyect = () => {
+  
+  const searchParams = useParams();
+  const navigate = useNavigate();
+  const [titulo, setTitulo]= useState('');
+  const [descripcion, setDescripcion]= useState('');
+  const [autores, setAutores] = useState(['']);
+  const [url, setUrl] = useState('');
+  const [fecha, setFecha]= useState('');
+
+  const setDetail= async(id)=>{
+    const result= await getDetailProyect(id);
+    switch(result.status){
+      case 200:{
+        const {titulo, descripcion, fecha_publicacion, url_archivo, autores}= result.proyecto;
+        setTitulo(titulo);
+        setDescripcion(descripcion);
+        setUrl(url_archivo);
+        setAutores(autores);
+        setFecha(fecha_publicacion);
+        break;
+      }
+      case 400:{
+        alert('Por seguridad su sesion a finalizado, por favor vuevla a ingresar');
+        navigate('/login');
+        break;
+      }
+      default:{
+        
+      }
+    }
+  }
+
+  useEffect(()=>{
+    setDetail(searchParams.id);
+    // eslint-disable-next-line
+  },[searchParams])
+
   return (
     <Container fluid={true}>
       <Row>
-        <Navbar/>
+        <Navbar stop={true}/>
       </Row>
-      <Row>
-        <h2>Titulo de la investigacion</h2>
+      <Row className='justify-content-center'>
+        <Col xs={"auto"}>
+          <h2>{titulo}</h2>
+        </Col>
       </Row>
       <br/><br/>
       <Row xs={1} sm={2} lg={2} xl={2} xll={2} md={1}>
           <Col>
             <h3>Descripcion</h3>
             <br/>
-            <p>Lorem ipsum dolor sit amet consectetur, adipisicing elit. Perferendis autem at laboriosam explicabo corrupti obcaecati dignissimos, assumenda odio alias asperiores earum aut quas voluptas reiciendis illo quo ab sapiente, totam culpa debitis dicta magnam sit nam. Repellendus dolore quasi debitis qui pariatur ea reiciendis voluptatum, impedit velit harum neque! Nemo aliquid sed numquam consequatur minima quos repellendus a suscipit libero aut dolorem voluptatem possimus placeat mollitia maxime sunt nihil, adipisci harum ipsum at officiis nisi accusamus? Soluta voluptas distinctio veniam corrupti, fuga quaerat perspiciatis alias omnis, dolorum officia vero exercitationem vitae hic nesciunt tenetur animi culpa eaque odio, ab ullam magnam accusantium aspernatur velit sequi. Ad quidem eligendi omnis ducimus repellendus. Nemo sint, vero quasi est qui officiis dicta quam, possimus, sunt odit omnis! Quo aperiam recusandae adipisci consequuntur molestias totam dolorem odio, excepturi facilis saepe quia vitae dicta asperiores, illo, architecto ipsa fugiat quod corporis. Officia similique distinctio ex numquam nobis consectetur quidem aspernatur recusandae nesciunt non. Dolore at adipisci animi modi totam obcaecati architecto omnis cum debitis tempora repellendus nam praesentium eius dolorem, earum, ab veniam maiores quo in. Dolorum suscipit adipisci repellat esse accusamus neque quidem exercitationem aliquid odit totam vel, aliquam quis libero, sequi laborum corporis. </p>
+            <p>{descripcion}</p>
           </Col>
           <Col xs={4}>
             <h3>Detalles</h3>
             <br/>
-            <p><strong>Autores:</strong> xxxxxxxxxxxxx</p>
-            <p><strong>Fecha:</strong> xxxxxxxxxxxxx</p>
+            <p><strong>Autores:</strong> {autores.toString()} </p>
+            <p><strong>Fecha:</strong> {fecha}</p>
             <a href='#!'><ImFilePdf/> Visualizar Archivo</a>
             <Button variant="primary"><FaDownload/> Descargar</Button>
           </Col>
@@ -52,4 +94,4 @@ const detailProyect = () => {
   )
 }
 
-export default detailProyect;
+export default DetailProyect;

@@ -22,7 +22,9 @@ const passportAuth = (req, res, next) => {
                 });
             }
             res.status(200).send({
-                status: 'Login successful!',
+                status: 200,
+                msg: 'Login successful!',
+                type: user.tipo_usuario
             });
         });
     })(req, res, next);

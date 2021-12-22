@@ -1,13 +1,13 @@
 export const queries = {
   GET_USERS: `SELECT * FROM usuario`,
   GET_USER_BY_EMAIL: `SELECT * FROM usuario WHERE correo = $1`,
-  GET_USER_BY_ID:`SELECT cedula, correo, usuario.nombre AS nombre, contrasenia, tipo_usuario.nombre AS tipoUsuario FROM usuario, tipo_usuario WHERE cedula=$1 AND usuario.id_tipo_usuario=tipo_usuario.id_tipo_usuario;`,
+  GET_USER_BY_ID:`SELECT cedula, correo, usuario.nombre AS nombre, contrasenia, tipo_usuario.nombre AS tipoUsuario, escuela.nombre as escuela, facultad.nombre as facultad FROM usuario, tipo_usuario, escuela, facultad WHERE escuela.id_escuela=usuario.id_escuela AND facultad.id_facultad=escuela.id_facultad AND cedula=$1 AND usuario.id_tipo_usuario=tipo_usuario.id_tipo_usuario`,
   CHANGE_KEY:`UPDATE usuario SET contrasenia = $1 WHERE cedula = $2 RETURNING *`
 };
 
 export const queriesProyect = {
-  GET_PROYECT:`SELECT archivo.*, usuario.nombre as autor FROM archivo, usuario, autor WHERE archivo.id_archivo= $1 AND autor.id_archivo=archivo.id_archivo AND autor.cedula=usuario.cedula ORDER BY archivo.titulo`,
-  GET_PROYECTS_RECENT:`SELECT titulo FROM archivo ORDER BY fecha_publicacion ASC LIMIT 3`,
+  GET_PROYECT:`SELECT titulo, descripcion, to_char(fecha_publicacion, 'DD/MM/YYYY HH24:MI') as fecha_publicacion, url_archivo, usuario.nombre as autor FROM archivo, usuario, autor WHERE archivo.id_archivo= $1 AND autor.id_archivo=archivo.id_archivo AND autor.cedula=usuario.cedula ORDER BY archivo.titulo`,
+  GET_PROYECTS_RECENT:`SELECT titulo FROM archivo ORDER BY fecha_publicacion DESC LIMIT 3`,
   GET_PROYECT_FILTER:{
     BEGINNING:`SELECT archivo.titulo as titulo, escuela.nombre as escuela FROM archivo, escuela, autor, usuario`,
     END:` usuario.id_escuela=escuela.id_escuela AND usuario.cedula=autor.cedula AND autor.id_archivo=archivo.id_archivo and archivo.estado like 'Aprobado' ORDER BY archivo.fecha_publicacion ASC `
@@ -17,7 +17,8 @@ export const queriesProyect = {
   UPDATE_STATE_PROYECT:`UPDATE archivo SET estado = $1 WHERE id_archivo=$2`,
   INSERT_AUTHORS:`INSERT INTO autor VALUES ($1, $2) RETURNING *`,
   COMMENT_PROYECT:`INSERT INTO nota_archivo (contenido, id_archivo, cedula) VALUES ($1, $2, $3) RETURNING *`,
-  UPDATE_URL_PROYECT:`UPDATE archivo SET url_archivo = $1 WHERE id_archivo = $2`
+  UPDATE_URL_PROYECT:`UPDATE archivo SET url_archivo = $1 WHERE id_archivo = $2`,
+  GET_COMMENT_USER:`SELECT DISTINCT nota_archivo.id_archivo AS id, archivo.titulo AS titulo, escuela.nombre AS escuela FROM nota_archivo, archivo, escuela, autor, usuario where nota_archivo.cedula=$1 AND archivo.id_archivo=nota_archivo.id_archivo AND autor.id_archivo=archivo.id_archivo AND usuario.cedula=autor.cedula AND escuela.id_escuela = usuario.id_escuela`
 };
 
 export const queriesMeeting = {

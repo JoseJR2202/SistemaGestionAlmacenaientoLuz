@@ -37,6 +37,16 @@ router.get('/comments/:id', async (req, res) => {
         res.status(500).json({ status: 500, error: e, message: 'Ocurrio un error en el servidor' });
     }
 });
+router.post('/comments/user', async (req, res) => {
+    try {
+        console.log(req.user.cedula);
+        const data = await (0, proyects_1.getCommentsUser)(req.user.cedula);
+        res.status(200).json({ status: 200, comments: data, message: 'comentarios enviados' });
+    }
+    catch (e) {
+        res.status(500).json({ status: 500, error: e, message: 'Ocurrio un error en el servidor' });
+    }
+});
 router.post('/filter', fields_1.searchProyectFieldsValidation, fields_1.checkResult, async (req, res) => {
     try {
         const { titulo, escuela, facultad } = req.body;

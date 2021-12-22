@@ -1,8 +1,9 @@
-export const isLogged = (req, res, next) => {
+export const isLogged = (req:any, res, next) => {
   if (req.isAuthenticated()) {
     res.send({
       status: 304,
       response: 'Ya existe una sesión',
+      type:req.user.tipo_usuario
     });
   } else {
     next();
