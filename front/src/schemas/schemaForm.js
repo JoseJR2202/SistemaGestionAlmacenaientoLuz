@@ -33,3 +33,7 @@ export const jsonSearchMetting={
     titulo:"",
     horario:""
 };
+
+export const jsonComment={
+    comentario:""
+};

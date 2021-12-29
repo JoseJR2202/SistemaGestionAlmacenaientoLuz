@@ -109,6 +109,7 @@ export const getProyectFilter= async({titulo, escuela, facultad}:{titulo:string,
       console.log(response)
       const proyects:proyectFilter[]=response.map((rows)=>{
           return{
+              id:rows.id,
               titulo:rows.titulo,
               escuela:rows.escuela
           }
@@ -133,6 +134,7 @@ export const insertProyect=async({titulo, descripcion, autor}:{ titulo:string, d
       })
       console.log(response2)
       const proyects:proyect={
+          id_archivo:response.id_archivo,
           titulo:response.titulo,
           fecha_publicacion:response.fecha_publicacion,
           descripcion:response.descripcion

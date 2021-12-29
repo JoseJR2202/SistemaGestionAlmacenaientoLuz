@@ -11,6 +11,7 @@ export interface detailProyect extends proyect {
     autores: string[];
 }
 export interface proyectFilter {
+    id: number;
     titulo: string;
     escuela: string;
 }

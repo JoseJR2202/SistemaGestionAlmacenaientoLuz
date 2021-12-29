@@ -13,6 +13,7 @@ export interface detailProyect extends proyect{
 };
 
 export interface proyectFilter{
+    id:number,
     titulo:string,
     escuela:string
 };

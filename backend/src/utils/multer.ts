@@ -7,8 +7,9 @@ export default {
         destination: path.resolve(__dirname, '..', 'uploads'),
         filename(request, file, callback) {
             //const hash = crypto.randomBytes(6).toString('hex');
-
+            console.log(file.originalname)
             const fileName = `${Date.now()}-${file.originalname}`;
+            console.log(fileName)
 
             callback(null, fileName);
         }

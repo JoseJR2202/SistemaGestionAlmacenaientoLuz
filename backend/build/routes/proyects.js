@@ -90,6 +90,7 @@ router.post('/comments/:id', async (req, res) => {
 });
 router.put('/:id', uploads.single('file'), async (req, res) => {
     try {
+        console.log(req.file?.filename);
         const resultado = await (0, proyects_1.updateUrlProyect)({
             url: req.file?.filename,
             id: +req.params.id

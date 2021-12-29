@@ -118,6 +118,7 @@ const getProyectFilter = async ({ titulo, escuela, facultad }) => {
         console.log(response);
         const proyects = response.map((rows) => {
             return {
+                id: rows.id,
                 titulo: rows.titulo,
                 escuela: rows.escuela
             };
@@ -144,6 +145,7 @@ const insertProyect = async ({ titulo, descripcion, autor }) => {
         });
         console.log(response2);
         const proyects = {
+            id_archivo: response.id_archivo,
             titulo: response.titulo,
             fecha_publicacion: response.fecha_publicacion,
             descripcion: response.descripcion

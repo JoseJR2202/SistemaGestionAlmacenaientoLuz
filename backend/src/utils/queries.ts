@@ -9,7 +9,7 @@ export const queriesProyect = {
   GET_PROYECT:`SELECT titulo, descripcion, to_char(fecha_publicacion, 'DD/MM/YYYY HH24:MI') as fecha_publicacion, url_archivo, usuario.nombre as autor FROM archivo, usuario, autor WHERE archivo.id_archivo= $1 AND autor.id_archivo=archivo.id_archivo AND autor.cedula=usuario.cedula ORDER BY archivo.titulo`,
   GET_PROYECTS_RECENT:`SELECT titulo FROM archivo ORDER BY fecha_publicacion DESC LIMIT 3`,
   GET_PROYECT_FILTER:{
-    BEGINNING:`SELECT archivo.titulo as titulo, escuela.nombre as escuela FROM archivo, escuela, autor, usuario`,
+    BEGINNING:`SELECT archivo.id_archivo as id, archivo.titulo as titulo, escuela.nombre as escuela FROM archivo, escuela, autor, usuario`,
     END:` usuario.id_escuela=escuela.id_escuela AND usuario.cedula=autor.cedula AND autor.id_archivo=archivo.id_archivo and archivo.estado like 'Aprobado' ORDER BY archivo.fecha_publicacion ASC `
   },
   GET_COMMENTS_PROYECTS:`SELECT nota_archivo.contenido, to_char(nota_archivo.fecha, 'DD/MM/YYYY HH24:MI') as fecha, usuario.nombre FROM usuario, nota_archivo WHERE nota_archivo.id_archivo = $1 AND nota_archivo.cedula = usuario.cedula ORDER BY nota_archivo.fecha ASC`,                          

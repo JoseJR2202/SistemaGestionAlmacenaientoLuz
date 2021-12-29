@@ -90,3 +90,10 @@ export const fieldSearchMetting=[{
     type:"date",
     Col:true
 }];
+
+export const fieldComment=[{
+    title:" ",
+    name:"comentario",
+    type:'text',
+    as:'textarea'
+}]

@@ -1,4 +1,4 @@
-import React from 'react'
+import React, {useState} from 'react'
 import Navbar from '../../component/navBar'
 import {Row, Col, Container} from 'react-bootstrap'
 import Table from '../../component/table';
@@ -9,9 +9,42 @@ import { fieldSearchProyect } from '../../schemas/schemaField';
 import { jsonSearchProyect } from '../../schemas/schemaForm';
 import { schemaSearchProyect } from '../../schemas/schemaValidation';
 import Forms from '../../component/form';
-// import { useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
+import {filterProyect} from '../../utils/proyects.comm'
 
 const Investigation = () => {
+
+  const navigate = useNavigate();
+  const [proyects, setProyects]= useState([{id:0, titulo:'', extra:''}]);
+
+  const submitFilterProyect= async(valores, {resetForm})=>{
+    resetForm();
+    console.log(valores)
+    const {titulo, escuela, facultad}= valores;
+    const result= await filterProyect({titulo:titulo, escuela:escuela, facultad:facultad});
+    console.log(result)
+    switch(result.status){
+      case 200:{
+        setProyects(result.data.map((row)=>{
+          return {
+            id:row.id,
+            titulo:row.titulo,
+            extra:row.escuela
+          }
+        }))
+        break;
+      }
+      case 400:{
+        alert('Por seguridad su sesion a finalizado, por favor vuevla a ingresar');
+        navigate('/login');
+        break;
+      }
+      default:{
+        
+      }
+    }
+  }
+
   return (
     <Container fluid={true}>
       <Row>
@@ -31,32 +64,13 @@ const Investigation = () => {
         </Col>
       </Row>
       <br/>
-      <Forms jsonfield={fieldSearchProyect} jsonform={jsonSearchProyect} jsonValidation={schemaSearchProyect} submit={ (valores, {resetForm}) => {
-            resetForm();
-            console.log(valores);                
-      }}/>
+      <Forms jsonfield={fieldSearchProyect} jsonform={jsonSearchProyect} jsonValidation={schemaSearchProyect} submit={submitFilterProyect}/>
       <br/>
       <Row className="justify-content-center">
           <Table 
           pagination={true}
           head={headProyect}
-          contend={[{
-            id:1,
-            titulo:"proyecto de prueba 1",
-            extra:"escuela de prueba"
-          },{
-            id:7,
-            titulo:"proyecto de prueba 2",
-            extra:"escuela de prueba"
-          },{
-            id:3,
-            titulo:"proyecto de prueba 3",
-            extra:"escuela de prueba"
-          },{
-            id:4,
-            titulo:"proyecto de prueba 5",
-            extra:"escuela de prueba"
-          }]}
+          contend={proyects}
           />
       </Row>
     </Container>

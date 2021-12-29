@@ -1,10 +1,16 @@
 import React,{useEffect, useState} from 'react'
-import Navbar from '../../component/navBar'
-import {Row, Col, Container, Button, Form, FloatingLabel} from 'react-bootstrap'
+import Navbar from '../../component/navBar';
+import VisualPDF from '../../component/visualPDF';
+import ListComments from '../../component/listComent';
+import {Row, Col, Container, Button, Modal} from 'react-bootstrap'
 import { ImFilePdf } from 'react-icons/im';
 import {FaDownload} from 'react-icons/fa';
 import { useParams, useNavigate } from "react-router-dom";
-import {getDetailProyect} from '../../utils/proyects.comm';
+import {getDetailProyect, getProyect, getCommentsProyect, insertCommentProyect} from '../../utils/proyects.comm';
+import { fieldComment } from '../../schemas/schemaField';
+import { jsonComment } from '../../schemas/schemaForm';
+import { schemaComment } from '../../schemas/schemaValidation';
+import Forms from '../../component/form';
 
 const DetailProyect = () => {
   
@@ -14,7 +20,31 @@ const DetailProyect = () => {
   const [descripcion, setDescripcion]= useState('');
   const [autores, setAutores] = useState(['']);
   const [url, setUrl] = useState('');
+  const [nombreDescarga, setNombreDescarga]= useState('');
   const [fecha, setFecha]= useState('');
+  const [comentarios, setComentarios]=useState([{nombre:'', fecha:"", contenido:""}]);
+  const [showModal, setShowModal]= useState(false);
+  const [refresh, setRefresh]= useState(false);
+
+  const submitComment=async(valores, {resetForm})=>{
+    resetForm();
+    const result= await insertCommentProyect(searchParams.id,valores.comentario);
+    switch(result.status){
+      case 200:{
+        alert("mensaje enviado existosamente");
+        setRefresh(!refresh)
+        break;
+      }
+      case 400:{
+        alert('Por seguridad su sesion a finalizado, por favor vuevla a ingresar');
+        navigate('/login');
+        break;
+      }
+      default:{
+        
+      }
+    }
+  }
 
   const setDetail= async(id)=>{
     const result= await getDetailProyect(id);
@@ -23,9 +53,13 @@ const DetailProyect = () => {
         const {titulo, descripcion, fecha_publicacion, url_archivo, autores}= result.proyecto;
         setTitulo(titulo);
         setDescripcion(descripcion);
-        setUrl(url_archivo);
+        setUrl(await getProyect(url_archivo));
         setAutores(autores);
         setFecha(fecha_publicacion);
+        setNombreDescarga(url_archivo.substring(url_archivo.indexOf('-')+1))
+        const result2= await getCommentsProyect(id);
+        setComentarios(result2.comment);
+        console.log(result2)
         break;
       }
       case 400:{
@@ -42,7 +76,7 @@ const DetailProyect = () => {
   useEffect(()=>{
     setDetail(searchParams.id);
     // eslint-disable-next-line
-  },[searchParams])
+  },[searchParams, refresh])
 
   return (
     <Container fluid={true}>
@@ -66,29 +100,36 @@ const DetailProyect = () => {
             <br/>
             <p><strong>Autores:</strong> {autores.toString()} </p>
             <p><strong>Fecha:</strong> {fecha}</p>
-            <a href='#!'><ImFilePdf/> Visualizar Archivo</a>
-            <Button variant="primary"><FaDownload/> Descargar</Button>
+            <p> <a href={url} download={nombreDescarga}> <FaDownload/>Descargar Archivo</a> </p>
+            <Button variant="primary" onClick={()=>setShowModal(true)}><ImFilePdf/> Visualizar</Button>
           </Col>
       </Row>
       <br/><br/>
       <Row>
-        <h3>Dejar un comentario</h3>
-        <br/>
-        <FloatingLabel controlId="textArea" label="">
-            <Form.Control
-            as="textarea"
-            style={{ height: '100px' }}
-            />
-        </FloatingLabel>
-        <Button variant="primary">Enviar</Button>
+        <h2>Dejar un comentario</h2>
+        <Forms jsonfield={fieldComment} jsonform={jsonComment} jsonValidation={schemaComment} submit={submitComment}/>
       </Row>
       <br/>
       <Row>
         <h3>Comentarios</h3>
         <br/>
-        {/*Lista de comentarios*/}
+        <ListComments jsonComments={comentarios}/>
       </Row>
       <br/>
+      <Modal
+      show={showModal}
+      onHide={()=>{setShowModal(false)}}
+      fullscreen={true}
+      >
+        <Modal.Header closeButton>
+          <Modal.Title id="contained-modal-title-vcenter">
+           Visualizador de PDF
+          </Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          <VisualPDF url={"http://localhost:5000/files/1639685482907-Exportar%20diagramas%20sin%20la%20marca%20UNREGISTERD%20en%20StarlUML.pdf"} name={nombreDescarga}/>
+        </Modal.Body>
+      </Modal>
     </Container>
    
   )

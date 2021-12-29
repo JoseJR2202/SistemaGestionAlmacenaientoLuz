@@ -65,3 +65,9 @@ export const schemaSearchMetting= Yup.object().shape({
     .min(10, "la clave debe tener minimo 10 caracteres"),
     horario: Yup.date()
 });
+
+export const schemaComment= Yup.object().shape({
+    comentario: Yup.string()
+    .required()
+    .min(10, "el comentario debe tener minimo 10 caracteres"),
+});

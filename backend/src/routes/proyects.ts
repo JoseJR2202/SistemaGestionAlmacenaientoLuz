@@ -88,6 +88,7 @@ router.post('/comments/:id', async(req:any, res)=>{
 
 router.put('/:id', uploads.single('file') ,async(req:any, res)=>{
   try {
+      console.log(req.file?.filename)
       const resultado: boolean=await updateUrlProyect({
           url:req.file?.filename,
           id:+req.params.id

@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useState, useEffect} from 'react';
 import { Container, Row, Col } from 'react-bootstrap';
 import Navbar from '../component/navBar';
 import Image from '../component/image';
@@ -7,8 +7,42 @@ import header from '../img/investigation3.jpg';
 import imagen from '../img/chemistry.jpg';
 import civil from '../img/civil.jpg';
 import programers from '../img/computer.jpg';
+import { useNavigate } from "react-router-dom";
+import { getRecentProyects } from '../utils/proyects.comm';
 
-const home = () => {
+const Home = () => {
+  const navigate = useNavigate();
+  const [proyects, setProyects]= useState([{titulo:'', extra:''}]);
+
+  const recentProyects= async()=>{
+    const result= await getRecentProyects();
+    console.log(result)
+    switch(result.status){
+      case 200:{
+        setProyects(result.proyecto.map((row)=>{
+          return {
+            titulo:row,
+            extra:"Jimnenez Jose, Mario Gonzalez"
+          }
+        }))
+        break;
+      }
+      case 400:{
+        alert('Por seguridad su sesion a finalizado, por favor vuevla a ingresar');
+        navigate('/login');
+        break;
+      }
+      default:{
+        
+      }
+    }
+  }
+
+  useEffect(()=>{
+    recentProyects()
+    // eslint-disable-next-line
+  }, [])
+  
   return (
     <Container fluid={true}>
       <Row>
@@ -28,16 +62,7 @@ const home = () => {
         </Col>
       </Row>
       <br/><br/>
-      <Cards jsonCard={[{
-        titulo:"proyecto 1",
-        extra:"Jimnenez Jose, Mario Gonzalez"
-      },{
-        titulo:"proyecto 2",
-        extra:"Jimnenez Jose, Mario Gonzalez"
-      },{
-        titulo:"proyecto 3",
-        extra:"Jimnenez Jose, Mario Gonzalez"
-      }]}
+      <Cards jsonCard={proyects}
         image={[imagen,civil,programers]}
       />
       <br/><br/>
@@ -64,4 +89,4 @@ const home = () => {
   )
 }
 
-export default home
+export default Home

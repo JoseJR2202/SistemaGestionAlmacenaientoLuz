@@ -6,50 +6,6 @@ import Row from 'react-bootstrap/Row';
 
 const form = ({jsonform, jsonfield, jsonValidation, submit})=>{
 
-    const items = jsonfield.map(item=>{
-        return(
-            item.Col?
-        <Col  key={item.name} sm>
-                <Form.Group className="mb-3" controlId="exampleForm.ControlInput1">
-                <Form.Label>{item.title? item.title:item.name}</Form.Label>
-                <Field
-                    className="form-control"
-                    name={item.name}
-                    placeholder={`ingrese su ${item.title}`}
-                    type={item.type}
-                    as={item.as? item.as : 'input'}
-                />
-                <ErrorMessage 
-                    name={item.name}
-                    component="div"
-                    className="field-error text-danger"
-                />
-
-                </Form.Group>
-        </Col>
-         :
-         <div  key={item.name}>
-                <Form.Group className="mb-3" controlId="exampleForm.ControlInput1">
-                <Form.Label>{item.title? item.title:item.name}</Form.Label>
-                <Field
-                    className="form-control"
-                    name={item.name}
-                    placeholder={`ingrese su ${item.title}`}
-                    type={item.type}
-                    as={item.as? item.as : 'input'}
-                />
-                <ErrorMessage 
-                    name={item.name}
-                    component="div"
-                    className="field-error text-danger"
-                />
-
-                </Form.Group>
-        </div>
-         )
-        
-    })
-
     return(
         <div>
          <Formik
@@ -65,11 +21,75 @@ const form = ({jsonform, jsonfield, jsonValidation, submit})=>{
           isSubmitting,
           validating,
           valid,
+          setFieldValue
         }) =>
                     (
                     <form onSubmit={handleSubmit}>
                          <Row>
-                            {items}
+                            {
+                            jsonfield.map(item=>{
+                            return(
+                                item.Col?
+                            <Col  key={item.name} sm>
+                                    <Form.Group className="mb-3" controlId="exampleForm.ControlInput1">
+                                    <Form.Label>{item.title? item.title:item.name}</Form.Label>
+                                    {item.name==='archivo'?
+                                    <>
+                                    <input className="form-control" name={item.name} type="file" onChange={(event) => {
+                                        setFieldValue(item.name, event.currentTarget.files[0]);
+                                    }} />
+                                    </>
+                                    :
+                                    <>
+                                    <Field
+                                        className="form-control"
+                                        name={item.name}
+                                        placeholder={`ingrese su ${item.title}`}
+                                        type={item.type}
+                                        as={item.as? item.as : 'input'}
+                                    />
+                                    </>
+                                    }
+                                    
+                                    <ErrorMessage 
+                                        name={item.name}
+                                        component="div"
+                                        className="field-error text-danger"
+                                    />
+
+                                    </Form.Group>
+                            </Col>
+                            :
+                            <div  key={item.name}>
+                                    <Form.Group className="mb-3" controlId="exampleForm.ControlInput1">
+                                    <Form.Label>{item.title? item.title:item.name}</Form.Label>
+                                    {item.name==='archivo'?
+                                    <>
+                                    <input className="form-control" name={item.name} type="file" onChange={(event) => {
+                                        setFieldValue(item.name, event.currentTarget.files[0]);
+                                    }} />
+                                    </>
+                                    :
+                                    <>
+                                    <Field
+                                        className="form-control"
+                                        name={item.name}
+                                        placeholder={`ingrese su ${item.title}`}
+                                        type={item.type}
+                                        as={item.as? item.as : 'input'}
+                                    />
+                                    </>
+                                    }
+                                    
+                                    <ErrorMessage 
+                                        name={item.name}
+                                        component="div"
+                                        className="field-error text-danger"
+                                    />
+
+                                    </Form.Group>
+                            </div>
+                            )})}
                             <Col xs="auto" >
                                 <br/>
                                 <Button 
