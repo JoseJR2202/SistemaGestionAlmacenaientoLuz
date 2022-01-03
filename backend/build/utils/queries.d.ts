@@ -11,8 +11,10 @@ export declare const queriesProyect: {
         BEGINNING: string;
         END: string;
     };
+    GET_PROYECTS_STATUS: string;
     GET_COMMENTS_PROYECTS: string;
     INSERT_PROYECT: string;
+    DELETE_PROYECT: string;
     UPDATE_STATE_PROYECT: string;
     INSERT_AUTHORS: string;
     COMMENT_PROYECT: string;

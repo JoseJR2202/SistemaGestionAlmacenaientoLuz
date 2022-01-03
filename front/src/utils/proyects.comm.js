@@ -122,3 +122,42 @@ export const getRecentProyects= async()=>{
     console.log(result);
     return result;   
 }
+
+export const getProyectsStauts= async()=>{
+    const response = await fetch(`/api/proyects/state`,{
+        method: 'POST',
+        headers: {
+            "Content-Type": "application/json"
+        }
+    });
+    const result= await response.json();
+    console.log(result);
+    return result;   
+};
+
+export const changeStateProyect= async({id, option})=>{
+    const response= await fetch(`/api/proyects/state/${id}`,{
+        method: 'PUT',
+        headers: {
+            "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+           estado:option
+        })
+    });
+    const result= await response.json();
+    console.log(result);
+    return result;
+}
+
+export const deleteProyect= async(id)=>{
+    const response = await fetch(`/api/proyects/${id}`,{
+        method: 'DELETE',
+        headers: {
+            "Content-Type": "application/json"
+        }
+    });
+    const result= await response.json();
+    console.log(result);
+    return result;   
+};

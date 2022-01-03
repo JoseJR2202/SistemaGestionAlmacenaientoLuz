@@ -20,6 +20,7 @@ const DetailProyect = () => {
   const [descripcion, setDescripcion]= useState('');
   const [autores, setAutores] = useState(['']);
   const [url, setUrl] = useState('');
+  const [urlVisual, setUrlVisual] = useState('');
   const [nombreDescarga, setNombreDescarga]= useState('');
   const [fecha, setFecha]= useState('');
   const [comentarios, setComentarios]=useState([{nombre:'', fecha:"", contenido:""}]);
@@ -53,6 +54,7 @@ const DetailProyect = () => {
         const {titulo, descripcion, fecha_publicacion, url_archivo, autores}= result.proyecto;
         setTitulo(titulo);
         setDescripcion(descripcion);
+        setUrlVisual(url_archivo);
         setUrl(await getProyect(url_archivo));
         setAutores(autores);
         setFecha(fecha_publicacion);
@@ -127,7 +129,7 @@ const DetailProyect = () => {
           </Modal.Title>
         </Modal.Header>
         <Modal.Body>
-          <VisualPDF url={"http://localhost:5000/files/1639685482907-Exportar%20diagramas%20sin%20la%20marca%20UNREGISTERD%20en%20StarlUML.pdf"} name={nombreDescarga}/>
+          <VisualPDF url={`http://localhost:5000/files/${urlVisual}`} name={nombreDescarga}/>
         </Modal.Body>
       </Modal>
     </Container>

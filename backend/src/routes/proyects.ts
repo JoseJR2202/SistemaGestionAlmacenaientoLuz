@@ -1,9 +1,10 @@
 import { Router } from 'express';
 import { proyectFieldsValidation, searchProyectFieldsValidation, checkResult } from '@validations/fields';
 import { proyect, detailProyect, proyectFilter } from '@interfaces/Proyect';
-import { getProyectRecent, getProyect, getProyectFilter, insertProyect, updateStateProyect, getCommentProyect, commentProyect, updateUrlProyect, getCommentsUser } from '@helpers/proyects';
+import { getProyectRecent, getProyect, getProyectFilter, insertProyect, updateStateProyect, getCommentProyect, commentProyect, updateUrlProyect, getCommentsUser, getProyectStatus, deleteProyect } from '@helpers/proyects';
 import multer from 'multer';
 import multerconfig from '@utils/multer';
+import fs from 'fs/promises';
 
 const uploads= multer(multerconfig);
 const router = Router();
@@ -21,6 +22,29 @@ router.get('/:id', async(req, res)=>{
   try {
     const data:detailProyect= await getProyect(+req.params.id);
     res.status(200).json({ status: 200, proyecto: data, message: 'Datos del proyecto enviado correctamente' });
+  } catch (e) {
+    res.status(500).json({ status: 500, error: e, message: 'ocurrio un error en el servidor' });
+  }
+});
+
+router.delete('/:id', async(req, res)=>{
+  try {
+    // const proyect:detailProyect= await getProyect(+req.params.id);
+    const data:boolean= await deleteProyect(+req.params.id);
+    // if(data && proyect.url_archivo){
+    //   await fs.unlink(`../uploads/${proyect.url_archivo}`);
+    //   console.log('borrado');
+    // }
+    res.status(200).json({ status: 200, proyecto: data, message: 'Datos del proyecto borrados correctamente' });
+  } catch (e) {
+    res.status(500).json({ status: 500, error: e, message: 'ocurrio un error en el servidor' });
+  }
+});
+
+router.post('/state', async(req, res)=>{
+  try {
+    const data= await getProyectStatus();
+    res.status(200).json({ status: 200, proyecto: data, message: 'Datos de los proyectos enviados correctamente' });
   } catch (e) {
     res.status(500).json({ status: 500, error: e, message: 'ocurrio un error en el servidor' });
   }

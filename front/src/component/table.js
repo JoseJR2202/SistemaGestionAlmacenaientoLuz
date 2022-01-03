@@ -2,7 +2,7 @@ import React, {useMemo} from 'react'
 import { Table, ButtonToolbar, ButtonGroup, Button, SplitButton, Dropdown} from 'react-bootstrap';
 import { useTable, usePagination } from "react-table";
 
-const TableContend=({head, contend, pagination, button, onClickButton})=>{
+const TableContend=({head, contend, pagination, button, onClickButton, onSelect})=>{
 
     const data= useMemo(()=>contend,[contend]);
     const columns= useMemo(()=>head,[head]);
@@ -48,10 +48,9 @@ const TableContend=({head, contend, pagination, button, onClickButton})=>{
                         prepareRow(row)
                         return (
                             <tr {...row.getRowProps({
-                            onClick:()=>{onClickButton(row)}
                             })}>
                             {row.cells.map((cell) => {
-                              return <td {...cell.getCellProps()} >{cell.render('Cell')}</td>
+                              return <td {...cell.getCellProps()}  onClick={()=>{onClickButton(row)}} >{cell.render('Cell')}</td>
                             })}
                             {
                                 button?
@@ -62,7 +61,7 @@ const TableContend=({head, contend, pagination, button, onClickButton})=>{
                                     variant={"Secodary"}
                                     title={button.title? button.title: button.options[0]}>
                                         {button.options.map((option, index)=>{
-                                            return <Dropdown.Item key={index} eventKey={index}>{option}</Dropdown.Item>
+                                            return <Dropdown.Item onClick={()=>{onSelect(option, row.original.id)}} key={index} eventKey={index}>{option}</Dropdown.Item>
                                         })}
                                     </SplitButton>
                                 </td>

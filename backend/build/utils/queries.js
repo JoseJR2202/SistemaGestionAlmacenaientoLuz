@@ -14,8 +14,10 @@ exports.queriesProyect = {
         BEGINNING: `SELECT archivo.id_archivo as id, archivo.titulo as titulo, escuela.nombre as escuela FROM archivo, escuela, autor, usuario`,
         END: ` usuario.id_escuela=escuela.id_escuela AND usuario.cedula=autor.cedula AND autor.id_archivo=archivo.id_archivo and archivo.estado like 'Aprobado' ORDER BY archivo.fecha_publicacion ASC `
     },
+    GET_PROYECTS_STATUS: `SELECT archivo.id_archivo as id, archivo.titulo as titulo, usuario.nombre as autor, archivo.estado as estado FROM archivo, autor, usuario WHERE usuario.cedula=autor.cedula AND autor.id_archivo=archivo.id_archivo and archivo.estado IN ('Revision', 'Espera') ORDER BY archivo.fecha_publicacion ASC`,
     GET_COMMENTS_PROYECTS: `SELECT nota_archivo.contenido, to_char(nota_archivo.fecha, 'DD/MM/YYYY HH24:MI') as fecha, usuario.nombre FROM usuario, nota_archivo WHERE nota_archivo.id_archivo = $1 AND nota_archivo.cedula = usuario.cedula ORDER BY nota_archivo.fecha ASC`,
     INSERT_PROYECT: `INSERT INTO archivo (titulo, descripcion, fecha_publicacion, estado) values($1,$2,now(),'Espera') RETURNING *`,
+    DELETE_PROYECT: `DELETE FROM archivo WHERE id_archivo = $1`,
     UPDATE_STATE_PROYECT: `UPDATE archivo SET estado = $1 WHERE id_archivo=$2`,
     INSERT_AUTHORS: `INSERT INTO autor VALUES ($1, $2) RETURNING *`,
     COMMENT_PROYECT: `INSERT INTO nota_archivo (contenido, id_archivo, cedula) VALUES ($1, $2, $3) RETURNING *`,

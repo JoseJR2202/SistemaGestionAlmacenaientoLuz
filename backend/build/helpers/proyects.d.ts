@@ -8,11 +8,26 @@ export declare const getProyectFilter: ({ titulo, escuela, facultad }: {
     escuela: string;
     facultad: string;
 }) => Promise<proyectFilter[]>;
+export declare const getProyectStatus: () => Promise<{
+    revision: {
+        id: any;
+        titulo: any;
+        autor: any[];
+        estado: any;
+    }[];
+    standby: {
+        id: any;
+        titulo: any;
+        autor: any[];
+        estado: any;
+    }[];
+}>;
 export declare const insertProyect: ({ titulo, descripcion, autor }: {
     titulo: string;
     descripcion: string;
     autor: number[];
 }) => Promise<proyect>;
+export declare const deleteProyect: (id: number) => Promise<boolean>;
 export declare const updateStateProyect: ({ id, estado }: {
     id: number;
     estado: string;

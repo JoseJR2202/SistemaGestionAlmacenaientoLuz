@@ -123,6 +123,47 @@ export const getProyectFilter= async({titulo, escuela, facultad}:{titulo:string,
     }
 };
 
+export const getProyectStatus= async()=>{
+  const client = await pool.connect();
+  try {
+    const response = (await client.query(queriesProyect.GET_PROYECTS_STATUS)).rows;
+    console.log(response)
+    const proyectsStandby=response.filter((proyect)=>proyect.estado==='Espera').map((rows)=>{
+      return{
+          id:rows.id,
+          titulo:rows.titulo,
+          autor:response.filter((proyect)=>proyect.id===rows.id).map((row)=>{
+            return row.autor
+          }),
+          estado:rows.estado
+        }
+    })
+    const proyectsRevision=response.filter((proyect)=>proyect.estado==='Revision').map((rows)=>{
+      return{
+          id:rows.id,
+          titulo:rows.titulo,
+          autor:response.filter((proyect)=>proyect.id===rows.id).map((row)=>{
+            return row.autor
+          }),
+          estado:rows.estado
+        }
+    });
+    return {
+      revision:proyectsRevision.filter((proyect, index)=>{
+        return proyectsRevision.length===index+1? true : proyect.id!==proyectsRevision[index+1].id
+      }),
+      standby:proyectsStandby.filter((proyect, index)=>{
+        return proyectsStandby.length===index+1? true :proyect.id!==proyectsStandby[index+1].id
+      })
+    };
+  } catch (e) {
+    console.log(e)
+    throw e;
+  } finally {
+    client.release();
+  }
+};
+
 export const insertProyect=async({titulo, descripcion, autor}:{ titulo:string, descripcion:string, autor:number[]}):Promise<proyect>=>{
     const client = await pool.connect();
     try {
@@ -147,6 +188,22 @@ export const insertProyect=async({titulo, descripcion, autor}:{ titulo:string, d
     } finally {
       client.release();
     }
+};
+
+export const deleteProyect=async(id:number):Promise<boolean>=>{
+  const client = await pool.connect();
+  try {
+    await client.query('BEGIN');
+    const response = (await client.query(queriesProyect.DELETE_PROYECT,[id])).rowCount>0; 
+    console.log(response)
+    await client.query('COMMIT');
+    return response;
+  } catch (e) {
+    await client.query('ROLLBACK');
+    throw e;
+  } finally {
+    client.release();
+  }
 };
 
 export const updateStateProyect=async({id, estado}:{id:number, estado:string}): Promise<boolean>=>{

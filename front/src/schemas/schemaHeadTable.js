@@ -6,6 +6,14 @@ export const headProyect=[{
   accessor:'extra'
 }];
 
+export const headRequest=[{
+  Header:"Proyecto de investigacion",
+  accessor:'titulo'
+}, {
+  Header:"Autores",
+  accessor:'extra'
+}];
+
 export const headMeeting=[{
     Header:"Titulo de la Reunion",
     accessor:'titulo'

@@ -71,6 +71,7 @@ const Investigation = () => {
           pagination={true}
           head={headProyect}
           contend={proyects}
+          onClickButton={(row)=>{navigate(`/investigaciones/detail/${row.original.id}`)}}
           />
       </Row>
     </Container>

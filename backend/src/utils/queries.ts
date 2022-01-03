@@ -12,13 +12,16 @@ export const queriesProyect = {
     BEGINNING:`SELECT archivo.id_archivo as id, archivo.titulo as titulo, escuela.nombre as escuela FROM archivo, escuela, autor, usuario`,
     END:` usuario.id_escuela=escuela.id_escuela AND usuario.cedula=autor.cedula AND autor.id_archivo=archivo.id_archivo and archivo.estado like 'Aprobado' ORDER BY archivo.fecha_publicacion ASC `
   },
+  GET_PROYECTS_STATUS:`SELECT archivo.id_archivo as id, archivo.titulo as titulo, usuario.nombre as autor, archivo.estado as estado FROM archivo, autor, usuario WHERE usuario.cedula=autor.cedula AND autor.id_archivo=archivo.id_archivo and archivo.estado IN ('Revision', 'Espera') ORDER BY archivo.fecha_publicacion ASC`,
   GET_COMMENTS_PROYECTS:`SELECT nota_archivo.contenido, to_char(nota_archivo.fecha, 'DD/MM/YYYY HH24:MI') as fecha, usuario.nombre FROM usuario, nota_archivo WHERE nota_archivo.id_archivo = $1 AND nota_archivo.cedula = usuario.cedula ORDER BY nota_archivo.fecha ASC`,                          
   INSERT_PROYECT:`INSERT INTO archivo (titulo, descripcion, fecha_publicacion, estado) values($1,$2,now(),'Espera') RETURNING *`,
+  DELETE_PROYECT:`DELETE FROM archivo WHERE id_archivo = $1`,
   UPDATE_STATE_PROYECT:`UPDATE archivo SET estado = $1 WHERE id_archivo=$2`,
   INSERT_AUTHORS:`INSERT INTO autor VALUES ($1, $2) RETURNING *`,
   COMMENT_PROYECT:`INSERT INTO nota_archivo (contenido, id_archivo, cedula) VALUES ($1, $2, $3) RETURNING *`,
   UPDATE_URL_PROYECT:`UPDATE archivo SET url_archivo = $1 WHERE id_archivo = $2`,
-  GET_COMMENT_USER:`SELECT DISTINCT nota_archivo.id_archivo AS id, archivo.titulo AS titulo, escuela.nombre AS escuela FROM nota_archivo, archivo, escuela, autor, usuario where nota_archivo.cedula=$1 AND archivo.id_archivo=nota_archivo.id_archivo AND autor.id_archivo=archivo.id_archivo AND usuario.cedula=autor.cedula AND escuela.id_escuela = usuario.id_escuela`
+  GET_COMMENT_USER:`SELECT DISTINCT nota_archivo.id_archivo AS id, archivo.titulo AS titulo, usuario.nombre AS nombre, nota_archivo.fecha as fecha FROM nota_archivo, archivo, autor, usuario where autor.cedula=30355153 AND usuario.cedula=nota_archivo.cedula AND archivo.id_archivo=nota_archivo.id_archivo AND autor.id_archivo=archivo.id_archivo ORDER BY nota_archivo.fecha DESC LIMIT 4`,
+  GET_COMMENT_PROYECTS_USER:`SELECT DISTINCT nota_archivo.id_archivo AS id, archivo.titulo AS titulo, escuela.nombre AS escuela`
 };
 
 export const queriesMeeting = {
