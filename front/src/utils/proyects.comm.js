@@ -123,6 +123,18 @@ export const getRecentProyects= async()=>{
     return result;   
 }
 
+export const getCommentProyectsByUser= async()=>{
+    const response = await fetch(`/api/proyects/comments/user/proyects`,{
+        method: 'GET',
+        headers: {
+            "Content-Type": "application/json"
+        }
+    });
+    const result= await response.json();
+    console.log(result);
+    return result;   
+}
+
 export const getProyectsStauts= async()=>{
     const response = await fetch(`/api/proyects/state`,{
         method: 'POST',
@@ -161,3 +173,4 @@ export const deleteProyect= async(id)=>{
     console.log(result);
     return result;   
 };
+

@@ -63,7 +63,7 @@ function App() {
                 <UpcomingMeetings/>
               </PrivateRoute>
             }/>
-            <Route path="/reuniones/detail" element={
+            <Route path="/reuniones/detail/:id" element={
               <PrivateRoute>
                 <DetailMeetings/>
               </PrivateRoute>

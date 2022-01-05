@@ -1,8 +1,9 @@
-import React from 'react';
+import React, {useState, useEffect} from 'react';
 import Navbar from '../../component/navBar';
 import Table from '../../component/table';
 import {headMeeting} from '../../schemas/schemaHeadTable';
 import { Container, Row, Col } from 'react-bootstrap';
+import { useNavigate } from "react-router-dom";
 import Image from '../../component/image';
 import Cards from '../../component/listCard';
 import header from '../../img/investigation3.jpg';
@@ -13,8 +14,71 @@ import { fieldSearchMetting } from '../../schemas/schemaField';
 import { jsonSearchMetting } from '../../schemas/schemaForm';
 import { schemaSearchMetting } from '../../schemas/schemaValidation';
 import Forms from '../../component/form';
+import {recentMeeting, filterMeeting} from '../../utils/meeting.comm'
 
-const meetings = () => {
+const Meetings = () => {
+
+  const [meeting, setMeeting]= useState([{titulo:'', extra:''}]);
+  const navigate = useNavigate();
+  const [searchMeeting, setSearchhMeeting]= useState([{id:0, titulo:'', extra:''}]);
+
+  const submitFilterMeeting= async(valores, {resetForm})=>{
+    resetForm();
+    console.log(valores)
+    const {titulo, horario}= valores;
+    const result= await filterMeeting({titulo:titulo, horario:horario});
+    console.log(result)
+    switch(result.status){
+      case 200:{
+        setSearchhMeeting(result.meeting.map((row)=>{
+          return {
+            id:row.id,
+            titulo:row.asunto,
+            extra:row.fecha_inicio
+          }
+        }))
+        break;
+      }
+      case 400:{
+        alert('Por seguridad su sesion a finalizado, por favor vuevla a ingresar');
+        navigate('/login');
+        break;
+      }
+      default:{
+        
+      }
+    }
+  }
+
+  const listRecentMeeting= async()=>{
+    const result= await recentMeeting();
+    console.log(result)
+    switch(result.status){
+      case 200:{
+        setMeeting(result.meeting.map((row)=>{
+          return {
+            titulo:row.asunto,
+            extra:row.fecha
+          }
+        }))
+        break;
+      }
+      case 400:{
+        alert('Por seguridad su sesion a finalizado, por favor vuevla a ingresar');
+        navigate('/login');
+        break;
+      }
+      default:{
+        
+      }
+    }
+  }
+
+  useEffect(()=>{
+    listRecentMeeting();
+        // eslint-disable-next-line
+  },[])
+
   return (
     <Container fluid={true}>
       <Row>
@@ -34,16 +98,7 @@ const meetings = () => {
         </Col>
       </Row>
       <br/><br/>
-      <Cards jsonCard={[{
-        titulo:"Reunion 1",
-        extra:"Horario: xx/xx/xxxx xx:xx XM"
-      },{
-        titulo:"Reunion 2",
-        extra:"Horario: xx/xx/xxxx xx:xx XM"
-      },{
-        titulo:"Reunion 3",
-        extra:"Horario: xx/xx/xxxx xx:xx XM"
-      }]}
+      <Cards jsonCard={meeting}
         image={[imagen,civil,programers]}
       />
       <br/><br/>
@@ -53,32 +108,14 @@ const meetings = () => {
         </Col>
       </Row>
       <br/><br/>
-      <Forms jsonfield={fieldSearchMetting} jsonform={jsonSearchMetting} jsonValidation={schemaSearchMetting} submit={ (valores, {resetForm}) => {
-            resetForm();
-            console.log(valores);                
-      }}/>
+      <Forms jsonfield={fieldSearchMetting} jsonform={jsonSearchMetting} jsonValidation={schemaSearchMetting} submit={submitFilterMeeting}/>
       <br/>
       <Row className="justify-content-center">
           <Table 
           pagination={true}
           head={headMeeting}
-          contend={[{
-            id:9,
-            titulo:"Reunion de prueba 1",
-            extra:"xx/xx/xxxx xx:xx XM"
-          },{
-            id:8,
-            titulo:"Reunion de prueba 2",
-            extra:"xx/xx/xxxx xx:xx XM"
-          },{
-            id:3,
-            titulo:"Reunion de prueba 3",
-            extra:"xx/xx/xxxx xx:xx XM"
-          },{
-            id:23,
-            titulo:"Reunion de prueba 4",
-            extra:"xx/xx/xxxx xx:xx XM"
-          }]}
+          contend={searchMeeting}
+          onClickButton={(row)=>{navigate(`/reuniones/detail/${row.original.id}`)}}
           />
       </Row>
       <br/><br/>
@@ -86,4 +123,4 @@ const meetings = () => {
   )
 }
 
-export default meetings
+export default Meetings

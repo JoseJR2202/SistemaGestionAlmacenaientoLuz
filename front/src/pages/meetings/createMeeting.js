@@ -5,8 +5,35 @@ import { fieldMeeting } from '../../schemas/schemaField';
 import { jsonMetting } from '../../schemas/schemaForm';
 import { schemaMetting } from '../../schemas/schemaValidation';
 import Forms from '../../component/form';
+import { useNavigate } from "react-router-dom";
+import {createMeeting} from '../../utils/meeting.comm'
 
-const createMetting = () => {
+const CreateMettings = () => {
+
+  const navigate = useNavigate();
+
+  const submitMeeting= async(valores, {resetForm})=>{
+    resetForm();
+    console.log(valores)
+    const {asunto, descripcion, fecha, hora, invitados}= valores;
+    const result= await createMeeting({asunto:asunto, descripcion:descripcion, invitados:invitados.split(','), fecha:fecha+' '+hora});
+    console.log(result)
+    switch(result.status){
+      case 200:{
+        alert("Reunion creada")
+        break;
+      }
+      case 400:{
+        alert('Por seguridad su sesion a finalizado, por favor vuevla a ingresar');
+        navigate('/login');
+        break;
+      }
+      default:{
+        
+      }
+    }
+  }
+
   return (
     <Container fluid={true}>
       <Row>
@@ -21,10 +48,7 @@ const createMetting = () => {
       <br/>
       <Row className="justify-content-center">
           <Col xs="auto">
-            <Forms jsonfield={fieldMeeting} jsonform={jsonMetting} jsonValidation={schemaMetting} submit={ (valores, {resetForm}) => {
-                  resetForm();
-                  console.log(valores);                
-            }}/>
+            <Forms jsonfield={fieldMeeting} jsonform={jsonMetting} jsonValidation={schemaMetting} submit={submitMeeting}/>
           </Col>
         </Row>
     </Container>
@@ -32,4 +56,4 @@ const createMetting = () => {
   )
 }
 
-export default createMetting;
+export default CreateMettings;

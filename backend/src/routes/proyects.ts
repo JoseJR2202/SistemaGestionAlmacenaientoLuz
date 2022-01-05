@@ -1,7 +1,7 @@
 import { Router } from 'express';
 import { proyectFieldsValidation, searchProyectFieldsValidation, checkResult } from '@validations/fields';
 import { proyect, detailProyect, proyectFilter } from '@interfaces/Proyect';
-import { getProyectRecent, getProyect, getProyectFilter, insertProyect, updateStateProyect, getCommentProyect, commentProyect, updateUrlProyect, getCommentsUser, getProyectStatus, deleteProyect } from '@helpers/proyects';
+import { getProyectRecent, getProyect, getProyectFilter, insertProyect, updateStateProyect, getCommentProyect, commentProyect, updateUrlProyect, getCommentsUser, getProyectStatus, deleteProyect, getCommentProyectByUser } from '@helpers/proyects';
 import multer from 'multer';
 import multerconfig from '@utils/multer';
 import fs from 'fs/promises';
@@ -11,7 +11,7 @@ const router = Router();
 
 router.get('/recent', async (req, res) => {
   try {
-    const data:string[]= await getProyectRecent();
+    const data:object[]= await getProyectRecent();
     res.status(200).json({ status: 200, proyecto: data, message: 'Proyectos recientes enviados' });
   } catch (e) {
     res.status(500).json({ status: 500, error: e, message: 'Ocurrio un error en el servidor' });
@@ -63,6 +63,16 @@ router.post('/comments/user', async(req:any, res)=>{
   try {
       console.log(req.user.cedula)
       const data= await getCommentsUser(req.user.cedula);
+      res.status(200).json({ status: 200, comments: data, message: 'comentarios enviados' });
+  } catch (e) {
+      res.status(500).json({ status: 500, error: e, message: 'Ocurrio un error en el servidor' });
+  }
+});
+
+router.get('/comments/user/proyects', async(req:any, res)=>{
+  try {
+      console.log(req.user.cedula)
+      const data= await getCommentProyectByUser(req.user.cedula);
       res.status(200).json({ status: 200, comments: data, message: 'comentarios enviados' });
   } catch (e) {
       res.status(500).json({ status: 500, error: e, message: 'Ocurrio un error en el servidor' });

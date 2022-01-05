@@ -16,7 +16,7 @@ const PublicInvestigation = () => {
     resetForm();
     console.log(valores)
     const {archivo, autores, descripcion, titulo}= valores;
-    const result= await insertProyect({titulo:titulo, descripcion:descripcion, autores:[autores]});
+    const result= await insertProyect({titulo:titulo, descripcion:descripcion, autores:autores.split(',')});
     console.log(result)
     switch(result.status){
       case 200:{

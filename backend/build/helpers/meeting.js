@@ -17,6 +17,7 @@ const getMeeting = async (id) => {
             asunto: response.asunto,
             descripcion: response.descripcion,
             fecha_inicio: response.fecha_inicio,
+            fecha_fin: response.fecha_fin,
             participantes: response.cant_participantes
         };
         return meeting;

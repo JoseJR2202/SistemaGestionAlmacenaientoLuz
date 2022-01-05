@@ -64,7 +64,8 @@ router.post('/filterParticipate', searchMettingFieldsValidation, checkResult, as
 router.post('/', mettingFieldsValidation, checkResult, async(req:any, res)=>{
     try {
         const {asunto, descripcion, fecha, invitados}= req.body;
-        if(invitados.indexOf(req.user.cedula)<0){
+        console.log(invitados.indexOf(req.user.cedula.toString())<0)
+        if(invitados.indexOf(req.user.cedula.toString())<0){
             invitados.push(req.user.cedula)
         };
         const data:meeting= await insertMeeting({asunto:asunto, descripcion:descripcion, fecha_inicio:fecha, invitados:invitados});

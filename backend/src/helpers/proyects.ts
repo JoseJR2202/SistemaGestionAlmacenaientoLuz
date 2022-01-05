@@ -26,13 +26,16 @@ export const getProyect= async (id:number): Promise<detailProyect>=>{
     }
 };
 
-export const getProyectRecent=async (): Promise<string[]>=>{
+export const getProyectRecent=async (): Promise<object[]>=>{
     const client = await pool.connect();
     try {
       const response = (await client.query(queriesProyect.GET_PROYECTS_RECENT)).rows;
       console.log(response)
-      const titles:string[]=response.map((rows)=>{
-          return rows.titulo
+      const titles:object[]=response.map((rows)=>{
+          return {
+            titulo:rows.titulo,
+            fecha_publicacion:rows.fecha_publicacion
+          }
       })
       return titles;
     } catch (e) {
@@ -46,6 +49,19 @@ export const getCommentProyect=async (id:number)=>{
   const client = await pool.connect();
   try {
     const response = (await client.query(queriesProyect.GET_COMMENTS_PROYECTS, [id])).rows;
+    console.log(response)
+    return response;
+  } catch (e) {
+    throw e;
+  } finally {
+    client.release();
+  }
+};
+
+export const getCommentProyectByUser=async (id:number)=>{
+  const client = await pool.connect();
+  try {
+    const response = (await client.query(queriesProyect.GET_COMMENT_PROYECTS_USER, [id])).rows;
     console.log(response)
     return response;
   } catch (e) {

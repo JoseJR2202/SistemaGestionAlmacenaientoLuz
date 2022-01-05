@@ -8,7 +8,6 @@ const fields_1 = require("@validations/fields");
 const proyects_1 = require("@helpers/proyects");
 const multer_1 = __importDefault(require("multer"));
 const multer_2 = __importDefault(require("@utils/multer"));
-const promises_1 = __importDefault(require("fs/promises"));
 const uploads = (0, multer_1.default)(multer_2.default);
 const router = (0, express_1.Router)();
 router.get('/recent', async (req, res) => {
@@ -31,12 +30,12 @@ router.get('/:id', async (req, res) => {
 });
 router.delete('/:id', async (req, res) => {
     try {
-        const proyect = await (0, proyects_1.getProyect)(+req.params.id);
+        // const proyect:detailProyect= await getProyect(+req.params.id);
         const data = await (0, proyects_1.deleteProyect)(+req.params.id);
-        if (data && proyect.url_archivo) {
-            await promises_1.default.unlink(`../uploads/${proyect.url_archivo}`);
-            console.log('borrado');
-        }
+        // if(data && proyect.url_archivo){
+        //   await fs.unlink(`../uploads/${proyect.url_archivo}`);
+        //   console.log('borrado');
+        // }
         res.status(200).json({ status: 200, proyecto: data, message: 'Datos del proyecto borrados correctamente' });
     }
     catch (e) {
@@ -65,6 +64,16 @@ router.post('/comments/user', async (req, res) => {
     try {
         console.log(req.user.cedula);
         const data = await (0, proyects_1.getCommentsUser)(req.user.cedula);
+        res.status(200).json({ status: 200, comments: data, message: 'comentarios enviados' });
+    }
+    catch (e) {
+        res.status(500).json({ status: 500, error: e, message: 'Ocurrio un error en el servidor' });
+    }
+});
+router.get('/comments/user/proyects', async (req, res) => {
+    try {
+        console.log(req.user.cedula);
+        const data = await (0, proyects_1.getCommentProyectByUser)(req.user.cedula);
         res.status(200).json({ status: 200, comments: data, message: 'comentarios enviados' });
     }
     catch (e) {

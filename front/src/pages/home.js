@@ -9,10 +9,12 @@ import civil from '../img/civil.jpg';
 import programers from '../img/computer.jpg';
 import { useNavigate } from "react-router-dom";
 import { getRecentProyects } from '../utils/proyects.comm';
+import { lastMeeting } from '../utils/meeting.comm';
 
 const Home = () => {
   const navigate = useNavigate();
   const [proyects, setProyects]= useState([{titulo:'', extra:''}]);
+  const [meeting, setMeeting]= useState([{titulo:'', extra:''}]);
 
   const recentProyects= async()=>{
     const result= await getRecentProyects();
@@ -21,8 +23,32 @@ const Home = () => {
       case 200:{
         setProyects(result.proyecto.map((row)=>{
           return {
-            titulo:row,
-            extra:"Jimnenez Jose, Mario Gonzalez"
+            titulo:row.titulo,
+            extra:row.fecha_publicacion
+          }
+        }))
+        break;
+      }
+      case 400:{
+        alert('Por seguridad su sesion a finalizado, por favor vuevla a ingresar');
+        navigate('/login');
+        break;
+      }
+      default:{
+        
+      }
+    }
+  }
+
+  const listLastMeeting= async()=>{
+    const result= await lastMeeting();
+    console.log(result)
+    switch(result.status){
+      case 200:{
+        setMeeting(result.meeting.map((row)=>{
+          return {
+            titulo:row.asunto,
+            extra:row.fecha
           }
         }))
         break;
@@ -39,7 +65,8 @@ const Home = () => {
   }
 
   useEffect(()=>{
-    recentProyects()
+    recentProyects();
+    listLastMeeting();
     // eslint-disable-next-line
   }, [])
   
@@ -72,16 +99,7 @@ const Home = () => {
         </Col>
       </Row>
       <br/><br/>
-      <Cards jsonCard={[{
-        titulo:"Reunion 1",
-        extra:"Horario: xx/xx/xxxx xx:xx XM"
-      },{
-        titulo:"Reunion 2",
-        extra:"Horario: xx/xx/xxxx xx:xx XM"
-      },{
-        titulo:"Reunion 3",
-        extra:"Horario: xx/xx/xxxx xx:xx XM"
-      }]}
+      <Cards jsonCard={meeting}
         image={[imagen,civil,programers]}
       />
       <br/><br/>

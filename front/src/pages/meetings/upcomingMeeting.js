@@ -1,4 +1,4 @@
-import React from 'react'
+import React, {useState} from 'react';
 import Navbar from '../../component/navBar'
 import {Row, Container, Col} from 'react-bootstrap'
 import { fieldSearchMetting } from '../../schemas/schemaField';
@@ -7,8 +7,42 @@ import { schemaSearchMetting } from '../../schemas/schemaValidation';
 import Forms from '../../component/form';
 import Table from '../../component/table';
 import {headMeeting} from '../../schemas/schemaHeadTable';
+import {filterMeetingParticipate} from '../../utils/meeting.comm'
+import { useNavigate } from "react-router-dom";
 
-const upcomingMetting = () => {
+const UpcomingMetting = () => {
+
+  const [meeting, setMeeting]=useState([{id:0, titulo:'', extra:''}])
+  const navigate = useNavigate();
+
+  const submitFilterMeetingParticipate= async(valores, {resetForm})=>{
+    resetForm();
+    console.log(valores)
+    const {titulo, horario}= valores;
+    const result= await filterMeetingParticipate({titulo:titulo, horario:horario});
+    console.log(result)
+    switch(result.status){
+      case 200:{
+        setMeeting(result.meeting.map((row)=>{
+          return {
+            id:row.id,
+            titulo:row.asunto,
+            extra:row.fecha_inicio
+          }
+        }))
+        break;
+      }
+      case 400:{
+        alert('Por seguridad su sesion a finalizado, por favor vuevla a ingresar');
+        navigate('/login');
+        break;
+      }
+      default:{
+        
+      }
+    }
+  }
+
   return (
     <Container fluid={true}>
       <Row>
@@ -22,36 +56,19 @@ const upcomingMetting = () => {
       </Row>
       <br/>
       <Row className="justify-content-center">
-            <Forms jsonfield={fieldSearchMetting} jsonform={jsonSearchMetting} jsonValidation={schemaSearchMetting} submit={ (valores, {resetForm}) => {
-                  resetForm();
-                  console.log(valores);                
-            }}/>
+            <Forms jsonfield={fieldSearchMetting} jsonform={jsonSearchMetting} jsonValidation={schemaSearchMetting} submit={submitFilterMeetingParticipate}/>
         </Row>
         <br/>
         <Row className="justify-content-center">
           <Table 
           head={headMeeting}
-          contend={[{
-            id:1,
-            titulo:"Reunion de prueba 1",
-            extra:"xx/xx/xxxx xx:xx XM"
-          },{
-            id:7,
-            titulo:"Reunion de prueba 2",
-            extra:"xx/xx/xxxx xx:xx XM"
-          },{
-            id:3,
-            titulo:"Reunion de prueba 3",
-            extra:"xx/xx/xxxx xx:xx XM"
-          },{
-            id:4,
-            titulo:"Reunion de prueba 5",
-            extra:"xx/xx/xxxx xx:xx XM"
-          }]}
+          contend={meeting}
+          onClickButton={(row)=>{navigate(`/reuniones/detail/${row.original.id}`)}}
+          pagination={true}
           />
       </Row>
     </Container>
   )
 }
 
-export default upcomingMetting;
+export default UpcomingMetting;

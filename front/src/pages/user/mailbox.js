@@ -1,10 +1,46 @@
-import React from 'react'
+import React,{useEffect, useState} from 'react'
 import Navbar from '../../component/navBar'
 import {Row, Container, Col} from 'react-bootstrap'
 import Table from '../../component/table';
 import {headMailBox} from '../../schemas/schemaHeadTable';
+import {getCommentProyectsByUser} from '../../utils/proyects.comm';
+import { useNavigate } from "react-router-dom";
 
-const mailbox = () => {
+const Mailbox = () => {
+  
+  const navigate= useNavigate();
+  const [comments, setComments]= useState([{id:'', titulo:'', extra:''}]);
+
+  const getComments= async()=>{
+    const result= await getCommentProyectsByUser();
+    switch(result.status){
+      case 200:{
+          setComments(
+            result.comments.map((row)=>{
+              return{
+                id:row.id,
+                titulo:row.titulo,
+                extra:row.nombre
+              }
+            })
+          )
+          break;
+      }
+      case 400:{
+        alert('Por seguridad su sesion a finalizado, por favor vuevla a ingresar');
+        navigate('/login');
+        break;
+      }
+      default:{
+        
+      }
+    }
+  }
+
+  useEffect(()=>{
+    getComments();
+    // eslint-disable-next-line
+  }, [])
   return (
     <Container fluid={true}>
         <Row>
@@ -20,27 +56,12 @@ const mailbox = () => {
         <Row className="justify-content-center">
           <Table 
           head={headMailBox}
-          contend={[{
-            id:1,
-            titulo:"Proyecto de prueba 1",
-            extra:"Jose Jimenez"
-          },{
-            id:7,
-            titulo:"Proyecto de prueba 2",
-            extra:"Mario Gonzalez"
-          },{
-            id:3,
-            titulo:"Proyecto de prueba 3",
-            extra:"Genyelbert Acosta"
-          },{
-            id:4,
-            titulo:"Proyecto de prueba 5",
-            extra:"Anonimo X"
-          }]}
+          contend={comments}
+          onClickButton={(row)=>{navigate(`/investigaciones/detail/${row.original.id}`)}}
           />
       </Row>
     </Container>
   )
 }
 
-export default mailbox;
+export default Mailbox;

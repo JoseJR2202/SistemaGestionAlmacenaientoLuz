@@ -146,7 +146,7 @@ const Request = () => {
                 button={{
                     type:'dropdown',
                     title:'Espera',
-                    options:["Revision","Aprobada","Negada"]
+                    options:["Revision","Aprobado","Negada"]
                 }}
                 />
             </Row>

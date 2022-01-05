@@ -3,7 +3,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.updateUrlProyect = exports.commentProyect = exports.updateStateProyect = exports.deleteProyect = exports.insertProyect = exports.getProyectStatus = exports.getProyectFilter = exports.getCommentsUser = exports.getCommentProyect = exports.getProyectRecent = exports.getProyect = void 0;
+exports.updateUrlProyect = exports.commentProyect = exports.updateStateProyect = exports.deleteProyect = exports.insertProyect = exports.getProyectStatus = exports.getProyectFilter = exports.getCommentsUser = exports.getCommentProyectByUser = exports.getCommentProyect = exports.getProyectRecent = exports.getProyect = void 0;
 const pool_1 = __importDefault(require("@utils/pool"));
 const queries_1 = require("@utils/queries");
 const pool = pool_1.default.getInstance();
@@ -37,7 +37,10 @@ const getProyectRecent = async () => {
         const response = (await client.query(queries_1.queriesProyect.GET_PROYECTS_RECENT)).rows;
         console.log(response);
         const titles = response.map((rows) => {
-            return rows.titulo;
+            return {
+                titulo: rows.titulo,
+                fecha_publicacion: rows.fecha_publicacion
+            };
         });
         return titles;
     }
@@ -64,6 +67,21 @@ const getCommentProyect = async (id) => {
     }
 };
 exports.getCommentProyect = getCommentProyect;
+const getCommentProyectByUser = async (id) => {
+    const client = await pool.connect();
+    try {
+        const response = (await client.query(queries_1.queriesProyect.GET_COMMENT_PROYECTS_USER, [id])).rows;
+        console.log(response);
+        return response;
+    }
+    catch (e) {
+        throw e;
+    }
+    finally {
+        client.release();
+    }
+};
+exports.getCommentProyectByUser = getCommentProyectByUser;
 const getCommentsUser = async (CI) => {
     const client = await pool.connect();
     try {
