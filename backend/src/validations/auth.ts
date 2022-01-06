@@ -20,3 +20,27 @@ export const isAuth = (req, res, next) => {
     });
   }
 };
+
+export const isAdmin = (req:any, res, next)=>{
+  if(req.user.tipo_usuario==='Administrador'){
+    next();
+  }else{
+    res.send({
+      status:403,
+      response:'No tiene acceso a estas funciones',
+      type:req.user.tipo_usuario
+    })
+  }
+};
+
+export const isValidate= (req:any, res, next)=>{
+  if(req.user.tipo_usuario==='Administrador' || req.user.tipo_usuario==='investigador' ){
+    next();
+  }else{
+    res.send({
+      status:403,
+      response:'No tiene acceso a estas',
+      type:req.user.tipo_usuario
+    })
+  }
+};

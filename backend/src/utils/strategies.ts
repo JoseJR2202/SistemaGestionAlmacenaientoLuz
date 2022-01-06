@@ -14,7 +14,7 @@ export const LocalStrategy = new Strategy(
         return done(null, false);
       }
 
-      const isMatch = clave==user.clave//await comparePassword(clave, user.clave);
+      const isMatch = await comparePassword(clave, user.clave);
 
       delete user.clave;
       return isMatch ? done(null, user) : done(null, false);

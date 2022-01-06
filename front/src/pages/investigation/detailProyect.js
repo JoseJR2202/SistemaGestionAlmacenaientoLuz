@@ -38,6 +38,8 @@ const DetailProyect = () => {
       }
       case 400:{
         alert('Por seguridad su sesion a finalizado, por favor vuevla a ingresar');
+        sessionStorage.removeItem('auth');
+        sessionStorage.removeItem('acceso');
         navigate('/login');
         break;
       }
@@ -66,6 +68,8 @@ const DetailProyect = () => {
       }
       case 400:{
         alert('Por seguridad su sesion a finalizado, por favor vuevla a ingresar');
+        sessionStorage.removeItem('auth');
+        sessionStorage.removeItem('acceso');
         navigate('/login');
         break;
       }

@@ -5,7 +5,8 @@ exports.queries = {
     GET_USERS: `SELECT * FROM usuario`,
     GET_USER_BY_EMAIL: `SELECT * FROM usuario WHERE correo = $1`,
     GET_USER_BY_ID: `SELECT cedula, correo, usuario.nombre AS nombre, contrasenia, tipo_usuario.nombre AS tipoUsuario, escuela.nombre as escuela, facultad.nombre as facultad FROM usuario, tipo_usuario, escuela, facultad WHERE escuela.id_escuela=usuario.id_escuela AND facultad.id_facultad=escuela.id_facultad AND cedula=$1 AND usuario.id_tipo_usuario=tipo_usuario.id_tipo_usuario`,
-    CHANGE_KEY: `UPDATE usuario SET contrasenia = $1 WHERE cedula = $2 RETURNING *`
+    CHANGE_KEY: `UPDATE usuario SET contrasenia = $1 WHERE cedula = $2 RETURNING *`,
+    INSERT_USER: `INSERT INTO usuario VALUES ($1, $2, $3, $4, $5, $6) RETURNING *`
 };
 exports.queriesProyect = {
     GET_PROYECT: `SELECT titulo, descripcion, to_char(fecha_publicacion, 'DD/MM/YYYY HH24:MI') as fecha_publicacion, url_archivo, usuario.nombre as autor FROM archivo, usuario, autor WHERE archivo.id_archivo= $1 AND autor.id_archivo=archivo.id_archivo AND autor.cedula=usuario.cedula ORDER BY archivo.titulo`,

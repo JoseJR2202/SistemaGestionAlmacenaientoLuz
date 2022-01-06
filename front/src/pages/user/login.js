@@ -1,4 +1,4 @@
-import React, {useState} from 'react'
+import React from 'react'
 import Container from 'react-bootstrap/Container';
 import Row from 'react-bootstrap/Row';
 import { FaUserAlt } from 'react-icons/fa';
@@ -13,7 +13,6 @@ import {login} from '../../utils/session.comm';
 const Login = () => {
 
   const navigate= useNavigate();
-  const [dialogError, setDialogError]=useState('');
 
   const submit = async(valores, {resetForm})=>{
     resetForm();
@@ -34,11 +33,11 @@ const Login = () => {
         break; 
       }
       case 400:{
-        setDialogError(`Error en ${result.error.param}: ${result.error.msg}`);
+        alert(`Error en ${result.error.param}: ${result.error.msg}`);
         break;
       }
       default : {
-        setDialogError(`Ocurrio un error en el servidor, las credenciales enviadas son invalidas, intente nuevamente mas tarde`)
+        alert(`Ocurrio un error en el servidor, las credenciales enviadas son invalidas, intente nuevamente mas tarde`)
         break;
       }
     }             
@@ -60,11 +59,6 @@ const Login = () => {
         <Row className="justify-content-center">
           <Col xs="auto">
             <Forms jsonfield={fieldLogin} jsonform={jsonLogin} jsonValidation={schemaLogin} submit={submit}/>
-          </Col>
-        </Row>
-        <Row>
-          <Col xs="auto">
-            <p>{dialogError}</p>
           </Col>
         </Row>
       </div>

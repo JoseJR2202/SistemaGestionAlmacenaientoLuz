@@ -4,6 +4,7 @@ import {Row, Col, Container, Button, Stack, Modal} from 'react-bootstrap';
 import Table from '../../component/table';
 import {headProyect} from '../../schemas/schemaHeadTable';
 import { FaUserCircle } from 'react-icons/fa';
+import { FiLogOut } from 'react-icons/fi';
 import { fieldChangeKey } from '../../schemas/schemaField';
 import { jsonChangeKey } from '../../schemas/schemaForm';
 import { schemaChangeKey } from '../../schemas/schemaValidation';
@@ -11,7 +12,7 @@ import Forms from '../../component/form';
 import { useNavigate } from "react-router-dom";
 import {detailUser, changePassword} from '../../utils/user.comm';
 import {getCommentsUser} from '../../utils/proyects.comm';
-
+import {logout} from '../../utils/session.comm';
 
 const Profile = () => {
 
@@ -24,6 +25,29 @@ const Profile = () => {
   const [proyects, setProyects]= useState([{id:0, titulo:'', extra:''}]);
   const [showModal, setShowModal]= useState(false);
   const navigate= useNavigate();
+
+  const getLogout= async()=>{
+    const result = await logout();
+    switch(result.status){
+      case 200:{
+        alert("Cerrando sesion...")
+        sessionStorage.removeItem('auth');
+        sessionStorage.removeItem('acceso');
+        navigate('/login');
+        break;
+      }
+      case 400:{
+        alert('Por seguridad su sesion a finalizado, por favor vuevla a ingresar');
+        sessionStorage.removeItem('auth');
+        sessionStorage.removeItem('acceso');
+        navigate('/login');
+        break;
+      }
+      default:{
+        
+      }
+    }
+  }
 
   const setDetail= async()=>{
     const result = await detailUser();
@@ -40,6 +64,8 @@ const Profile = () => {
       }
       case 400:{
         alert('Por seguridad su sesion a finalizado, por favor vuevla a ingresar');
+        sessionStorage.removeItem('auth');
+        sessionStorage.removeItem('acceso');
         navigate('/login');
         break;
       }
@@ -64,6 +90,8 @@ const Profile = () => {
       }
       case 400:{
         alert('Por seguridad su sesion a finalizado, por favor vuevla a ingresar');
+        sessionStorage.removeItem('auth');
+        sessionStorage.removeItem('acceso');
         navigate('/login');
         break;
       }
@@ -84,6 +112,8 @@ const Profile = () => {
       }
       case 400:{
         alert('Por seguridad su sesion a finalizado, por favor vuevla a ingresar');
+        sessionStorage.removeItem('auth');
+        sessionStorage.removeItem('acceso');
         navigate('/login');
         break;
       }
@@ -108,6 +138,8 @@ const Profile = () => {
       <Row className="justify-content-center">
         <Col xs="auto">
           <FaUserCircle size="200"/>
+          <br/>
+          <Button variant="danger" onClick={getLogout}>Cerrar sesion  <FiLogOut/></Button>
         </Col>
         <Col xs="auto">
           <p><strong>Nombre:</strong> {name}</p>
@@ -115,10 +147,10 @@ const Profile = () => {
           <p><strong>Correo:</strong> {email}</p>
           <p><strong>Facultad:</strong> {school}</p>
           <p><strong>Escuela:</strong> {faculty}</p>
-          <p><strong>Clave:</strong> ******** <Button variant="primary" onClick={()=>setShowModal(true)}>Cambiar clave</Button> </p>
+          <Button variant="primary" onClick={()=>setShowModal(true)}>Cambiar clave</Button>
         </Col>
         {
-          sessionStorage.getItem("acceso")!=="Usuario"?//si es distinto de estudiante
+          sessionStorage.getItem("acceso")!=="Estudiante"?//si es distinto de estudiante
           <>
             <Col xs="auto">
               <section>

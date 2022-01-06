@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.isAuth = exports.isLogged = void 0;
+exports.isValidate = exports.isAdmin = exports.isAuth = exports.isLogged = void 0;
 const isLogged = (req, res, next) => {
     if (req.isAuthenticated()) {
         res.send({
@@ -26,4 +26,30 @@ const isAuth = (req, res, next) => {
     }
 };
 exports.isAuth = isAuth;
+const isAdmin = (req, res, next) => {
+    if (req.user.tipo_usuario === 'Administrador') {
+        next();
+    }
+    else {
+        res.send({
+            status: 403,
+            response: 'No tiene acceso a estas funciones',
+            type: req.user.tipo_usuario
+        });
+    }
+};
+exports.isAdmin = isAdmin;
+const isValidate = (req, res, next) => {
+    if (req.user.tipo_usuario === 'Administrador' || req.user.tipo_usuario === 'investigador') {
+        next();
+    }
+    else {
+        res.send({
+            status: 403,
+            response: 'No tiene acceso a estas',
+            type: req.user.tipo_usuario
+        });
+    }
+};
+exports.isValidate = isValidate;
 //# sourceMappingURL=auth.js.map

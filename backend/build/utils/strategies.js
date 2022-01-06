@@ -12,7 +12,7 @@ exports.LocalStrategy = new passport_local_1.Strategy({
         if (!user) {
             return done(null, false);
         }
-        const isMatch = clave == user.clave; //await comparePassword(clave, user.clave);
+        const isMatch = await (0, session_1.comparePassword)(clave, user.clave);
         delete user.clave;
         return isMatch ? done(null, user) : done(null, false);
     }

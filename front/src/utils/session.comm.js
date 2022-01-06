@@ -14,3 +14,13 @@ export const login = async({cedula, clave})=>{
     return result;
 };
 
+export const logout = async()=>{
+    const response = await fetch('/api/session/logout',{
+        method: 'GET',
+        headers: {
+            "Content-Type": "application/json"
+        }
+    });
+    const result= await response.json();
+    return result;
+};

@@ -3,6 +3,7 @@ export declare const queries: {
     GET_USER_BY_EMAIL: string;
     GET_USER_BY_ID: string;
     CHANGE_KEY: string;
+    INSERT_USER: string;
 };
 export declare const queriesProyect: {
     GET_PROYECT: string;

@@ -5,6 +5,7 @@ import { getProyectRecent, getProyect, getProyectFilter, insertProyect, updateSt
 import multer from 'multer';
 import multerconfig from '@utils/multer';
 import fs from 'fs/promises';
+import { isValidate, isAdmin } from '@validations/auth';
 
 const uploads= multer(multerconfig);
 const router = Router();
@@ -27,7 +28,7 @@ router.get('/:id', async(req, res)=>{
   }
 });
 
-router.delete('/:id', async(req, res)=>{
+router.delete('/:id', isAdmin, async(req, res)=>{
   try {
     // const proyect:detailProyect= await getProyect(+req.params.id);
     const data:boolean= await deleteProyect(+req.params.id);
@@ -41,7 +42,7 @@ router.delete('/:id', async(req, res)=>{
   }
 });
 
-router.post('/state', async(req, res)=>{
+router.post('/state', isAdmin, async(req, res)=>{
   try {
     const data= await getProyectStatus();
     res.status(200).json({ status: 200, proyecto: data, message: 'Datos de los proyectos enviados correctamente' });
@@ -69,7 +70,7 @@ router.post('/comments/user', async(req:any, res)=>{
   }
 });
 
-router.get('/comments/user/proyects', async(req:any, res)=>{
+router.get('/comments/user/proyects', isValidate, async(req:any, res)=>{
   try {
       console.log(req.user.cedula)
       const data= await getCommentProyectByUser(req.user.cedula);
@@ -90,7 +91,7 @@ router.post('/filter', searchProyectFieldsValidation, checkResult,async(req, res
   }
 });
 
-router.post('/', proyectFieldsValidation, checkResult,async(req, res)=>{
+router.post('/', isValidate, proyectFieldsValidation, checkResult,async(req, res)=>{
     try {
         const {titulo, descripcion, autores} = req.body;
         const data:proyect= await insertProyect({titulo:titulo, descripcion:descripcion, autor:autores})
@@ -100,7 +101,7 @@ router.post('/', proyectFieldsValidation, checkResult,async(req, res)=>{
     }
 });
 
-router.put('/state/:id',async(req, res)=>{
+router.put('/state/:id', isAdmin,async(req, res)=>{
     try {
         const {estado} = req.body;
         const data:boolean= await updateStateProyect({id:+req.params.id, estado:estado})

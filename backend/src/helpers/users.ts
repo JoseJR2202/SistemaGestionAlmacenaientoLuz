@@ -1,6 +1,7 @@
 import Pool from '@utils/pool';
-import { queries, queriesProyect } from '@utils/queries';
+import { queries } from '@utils/queries';
 import { User } from '@interfaces/User';
+import { compare, genSaltSync, hashSync  } from 'bcryptjs';
 
 const pool = Pool.getInstance();
 
@@ -8,7 +9,9 @@ export const updateKeyUser = async ({key, id}:{key:string, id:number}): Promise<
   const client = await pool.connect();
   try {
     await client.query('BEGIN');
-    const response = (await client.query(queries.CHANGE_KEY, [key, id])).rows[0];
+    const salt = genSaltSync(10);
+    const hashedPassword = hashSync(key, salt);
+    const response = (await client.query(queries.CHANGE_KEY, [hashedPassword, id])).rows[0];
     const user: User = {
       nombre: response.nombre,
       correo: response.correo,

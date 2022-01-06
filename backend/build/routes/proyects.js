@@ -8,6 +8,7 @@ const fields_1 = require("@validations/fields");
 const proyects_1 = require("@helpers/proyects");
 const multer_1 = __importDefault(require("multer"));
 const multer_2 = __importDefault(require("@utils/multer"));
+const auth_1 = require("@validations/auth");
 const uploads = (0, multer_1.default)(multer_2.default);
 const router = (0, express_1.Router)();
 router.get('/recent', async (req, res) => {
@@ -28,7 +29,7 @@ router.get('/:id', async (req, res) => {
         res.status(500).json({ status: 500, error: e, message: 'ocurrio un error en el servidor' });
     }
 });
-router.delete('/:id', async (req, res) => {
+router.delete('/:id', auth_1.isAdmin, async (req, res) => {
     try {
         // const proyect:detailProyect= await getProyect(+req.params.id);
         const data = await (0, proyects_1.deleteProyect)(+req.params.id);
@@ -42,7 +43,7 @@ router.delete('/:id', async (req, res) => {
         res.status(500).json({ status: 500, error: e, message: 'ocurrio un error en el servidor' });
     }
 });
-router.post('/state', async (req, res) => {
+router.post('/state', auth_1.isAdmin, async (req, res) => {
     try {
         const data = await (0, proyects_1.getProyectStatus)();
         res.status(200).json({ status: 200, proyecto: data, message: 'Datos de los proyectos enviados correctamente' });
@@ -70,7 +71,7 @@ router.post('/comments/user', async (req, res) => {
         res.status(500).json({ status: 500, error: e, message: 'Ocurrio un error en el servidor' });
     }
 });
-router.get('/comments/user/proyects', async (req, res) => {
+router.get('/comments/user/proyects', auth_1.isValidate, async (req, res) => {
     try {
         console.log(req.user.cedula);
         const data = await (0, proyects_1.getCommentProyectByUser)(req.user.cedula);
@@ -91,7 +92,7 @@ router.post('/filter', fields_1.searchProyectFieldsValidation, fields_1.checkRes
         res.status(500).json({ status: 500, error: e, message: 'ocurrio un error en el servidor' });
     }
 });
-router.post('/', fields_1.proyectFieldsValidation, fields_1.checkResult, async (req, res) => {
+router.post('/', auth_1.isValidate, fields_1.proyectFieldsValidation, fields_1.checkResult, async (req, res) => {
     try {
         const { titulo, descripcion, autores } = req.body;
         const data = await (0, proyects_1.insertProyect)({ titulo: titulo, descripcion: descripcion, autor: autores });
@@ -101,7 +102,7 @@ router.post('/', fields_1.proyectFieldsValidation, fields_1.checkResult, async (
         res.status(500).json({ status: 500, error: e, message: 'ocurrio un error en el servidor' });
     }
 });
-router.put('/state/:id', async (req, res) => {
+router.put('/state/:id', auth_1.isAdmin, async (req, res) => {
     try {
         const { estado } = req.body;
         const data = await (0, proyects_1.updateStateProyect)({ id: +req.params.id, estado: estado });

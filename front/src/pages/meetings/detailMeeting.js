@@ -32,7 +32,15 @@ const DetailMeeting = () => {
       }
       case 400:{
         alert('Por seguridad su sesion a finalizado, por favor vuevla a ingresar');
+        sessionStorage.removeItem('auth');
+        sessionStorage.removeItem('acceso');
         navigate('/login');
+        break;
+      }
+      case 403:{
+        alert("no tienes acceso a estas funciones");
+        sessionStorage.setItem('acceso', result.type);
+        navigate('/');
         break;
       }
       case 500:{
@@ -55,7 +63,15 @@ const DetailMeeting = () => {
       }
       case 400:{
         alert('Por seguridad su sesion a finalizado, por favor vuevla a ingresar');
+        sessionStorage.removeItem('auth');
+        sessionStorage.removeItem('acceso');
         navigate('/login');
+        break;
+      }
+      case 403:{
+        alert("no tienes acceso a estas funciones");
+        sessionStorage.setItem('acceso', result.type);
+        navigate('/');
         break;
       }
       default:{
@@ -75,12 +91,18 @@ const DetailMeeting = () => {
         setFechaFin(fecha_fin)
         setParticipantes(participantes);
         const result2= await commentsMeeting(id);
-        setComentarios(result2.comment);
-        console.log(result2)
+        if(result.status!==403){
+          setComentarios(result2.comment);
+          console.log(result2)
+        }else if(sessionStorage.getItem('acceso')!==result.type){
+          sessionStorage.setItem('acceso', result.type);
+        }
         break;
       }
       case 400:{
         alert('Por seguridad su sesion a finalizado, por favor vuevla a ingresar');
+        sessionStorage.removeItem('auth');
+        sessionStorage.removeItem('acceso');
         navigate('/login');
         break;
       }
@@ -125,7 +147,7 @@ const DetailMeeting = () => {
       </Row>
       <br/><br/>
       {
-          sessionStorage.getItem("acceso")==="Usuario"?
+          sessionStorage.getItem("acceso")==="Estudiante"?
           <></>:
           <>
             <Row>
