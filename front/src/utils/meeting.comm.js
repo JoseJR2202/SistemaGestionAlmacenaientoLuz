@@ -114,6 +114,30 @@ export const culminateMeeting= async(id)=>{
     return result; 
 };
 
+export const startMeeting= async(id)=>{
+    const response = await fetch(`/api/meeting/start/${id}`,{
+        method: 'PUT',
+        headers: {
+            "Content-Type": "application/json"
+        }
+    });
+    const result= await response.json();
+    console.log(result);
+    return result; 
+};
+
+export const isParticipant= async(id)=>{
+    const response = await fetch(`/api/meeting/isParticipant/${id}`,{
+        method: 'GET',
+        headers: {
+            "Content-Type": "application/json"
+        }
+    });
+    const result= await response.json();
+    console.log(result);
+    return result; 
+};
+
 export const insertCommentMeeting= async(descripcion, id)=>{
     const response = await fetch(`/api/meeting/comments/${id}`,{
         method: 'POST',

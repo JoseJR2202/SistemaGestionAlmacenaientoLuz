@@ -6,6 +6,8 @@ export interface meeting {
     fecha_fin?: string;
     participantes?: number[];
     estado?: string;
+    admin?: boolean;
+    inicio?: boolean;
 }
 export interface listMeeting {
     asunto: string;

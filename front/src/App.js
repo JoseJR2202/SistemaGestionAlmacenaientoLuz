@@ -20,6 +20,7 @@ import Meetings from './pages/meetings/meetings';
 import CreateMeetings from './pages/meetings/createMeeting';
 import DetailMeetings from './pages/meetings/detailMeeting';
 import UpcomingMeetings from './pages/meetings/upcomingMeeting';
+import RoomMeeting from './pages/meetings/roomMeeting';
 import Error from './pages/error404';
 
 function App() {
@@ -66,6 +67,11 @@ function App() {
             <Route path="/reuniones/detail/:id" element={
               <PrivateRoute>
                 <DetailMeetings/>
+              </PrivateRoute>
+            }/>
+             <Route path="/reuniones/room/:id" element={
+              <PrivateRoute>
+                <RoomMeeting/>
               </PrivateRoute>
             }/>
             <Route path="/investigaciones" element={

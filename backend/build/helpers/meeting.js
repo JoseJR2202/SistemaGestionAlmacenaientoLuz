@@ -3,11 +3,11 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.insertParticipates = exports.commentMeeting = exports.culminateMeeting = exports.insertMeeting = exports.getFilterMeetingParticipates = exports.getFilterMeeting = exports.getRecentMeeting = exports.getLastMeeting = exports.getCommentsMeeting = exports.getMeeting = void 0;
+exports.startMeeting = exports.isParticipant = exports.insertParticipates = exports.commentMeeting = exports.culminateMeeting = exports.insertMeeting = exports.getFilterMeetingParticipates = exports.getFilterMeeting = exports.getRecentMeeting = exports.getLastMeeting = exports.getCommentsMeeting = exports.getMeeting = void 0;
 const pool_1 = __importDefault(require("@utils/pool"));
 const queries_1 = require("@utils/queries");
 const pool = pool_1.default.getInstance();
-const getMeeting = async (id) => {
+const getMeeting = async ({ id, cedula }) => {
     const client = await pool.connect();
     try {
         const response = (await client.query(queries_1.queriesMeeting.GET_MEETING, [id])).rows[0];
@@ -18,7 +18,10 @@ const getMeeting = async (id) => {
             descripcion: response.descripcion,
             fecha_inicio: response.fecha_inicio,
             fecha_fin: response.fecha_fin,
-            participantes: response.cant_participantes
+            participantes: response.cant_participantes,
+            admin: response.cedula === cedula,
+            estado: response.estado,
+            inicio: response.inicio
         };
         return meeting;
     }
@@ -133,11 +136,11 @@ const getFilterMeetingParticipates = async ({ titulo, horario, cedula }) => {
     }
 };
 exports.getFilterMeetingParticipates = getFilterMeetingParticipates;
-const insertMeeting = async ({ asunto, descripcion, fecha_inicio, invitados }) => {
+const insertMeeting = async ({ asunto, descripcion, fecha_inicio, cedula, invitados }) => {
     const client = await pool.connect();
     try {
         await client.query('BEGIN');
-        const response = (await client.query(queries_1.queriesMeeting.INSERT_MEETING, [asunto, descripcion, fecha_inicio])).rows[0];
+        const response = (await client.query(queries_1.queriesMeeting.INSERT_MEETING, [asunto, descripcion, fecha_inicio, cedula])).rows[0];
         console.log(response);
         invitados.map(async (rows) => {
             const num = (await client.query(queries_1.queriesMeeting.INSERT_PARTICIPATES_MEETING, [response.id_reunion, rows])).rows[0].cedula;
@@ -218,4 +221,37 @@ const insertParticipates = async ({ id, cedula }) => {
     }
 };
 exports.insertParticipates = insertParticipates;
+const isParticipant = async ({ id, cedula }) => {
+    const client = await pool.connect();
+    try {
+        const response = (await client.query(queries_1.queriesMeeting.IS_PARTICIPANT, [id, cedula])).rowCount > 0;
+        console.log(response);
+        return response;
+    }
+    catch (e) {
+        throw e;
+    }
+    finally {
+        client.release();
+    }
+};
+exports.isParticipant = isParticipant;
+const startMeeting = async (id) => {
+    const client = await pool.connect();
+    try {
+        await client.query('BEGIN');
+        const response = (await client.query(queries_1.queriesMeeting.START_MEETING, [id])).rowCount > 0;
+        console.log(response);
+        await client.query('COMMIT');
+        return response;
+    }
+    catch (e) {
+        await client.query('ROLLBACK');
+        throw e;
+    }
+    finally {
+        client.release();
+    }
+};
+exports.startMeeting = startMeeting;
 //# sourceMappingURL=meeting.js.map
