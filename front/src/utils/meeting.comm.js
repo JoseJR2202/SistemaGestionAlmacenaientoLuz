@@ -138,6 +138,18 @@ export const isParticipant= async(id)=>{
     return result; 
 };
 
+export const isAdminMeeting= async(id)=>{
+    const response = await fetch(`/api/meeting/isAdmin/${id}`,{
+        method: 'GET',
+        headers: {
+            "Content-Type": "application/json"
+        }
+    });
+    const result= await response.json();
+    console.log(result);
+    return result; 
+};
+
 export const insertCommentMeeting= async(descripcion, id)=>{
     const response = await fetch(`/api/meeting/comments/${id}`,{
         method: 'POST',

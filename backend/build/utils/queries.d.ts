@@ -42,5 +42,6 @@ export declare const queriesMeeting: {
     INSERT_PARTICIPATES_MEETING: string;
     COMMENT_MEETIG: string;
     IS_PARTICIPANT: string;
+    IS_ADMIN_MEETING: string;
 };
 //# sourceMappingURL=queries.d.ts.map

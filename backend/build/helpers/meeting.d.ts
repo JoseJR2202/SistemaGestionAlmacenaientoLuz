@@ -36,5 +36,9 @@ export declare const isParticipant: ({ id, cedula }: {
     id: number;
     cedula: number;
 }) => Promise<boolean>;
+export declare const isAdminMeeting: ({ id, cedula }: {
+    id: number;
+    cedula: number;
+}) => Promise<boolean>;
 export declare const startMeeting: (id: number) => Promise<boolean>;
 //# sourceMappingURL=meeting.d.ts.map

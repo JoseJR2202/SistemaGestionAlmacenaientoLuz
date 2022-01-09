@@ -44,6 +44,7 @@ exports.queriesMeeting = {
     START_MEETING: `UPDATE reunion SET estado = 'Iniciado' WHERE id_reunion = $1`,
     INSERT_PARTICIPATES_MEETING: `INSERT INTO participante VALUES ($1, $2) RETURNING *`,
     COMMENT_MEETIG: `INSERT INTO nota_reunion (contenido, id_reunion, cedula) VALUES ($1, $2, $3) RETURNING *`,
-    IS_PARTICIPANT: `SELECT * FROM participante WHERE id_reunion = $1 AND cedula = $2`
+    IS_PARTICIPANT: `SELECT * FROM participante WHERE id_reunion = $1 AND cedula = $2`,
+    IS_ADMIN_MEETING: `SELECT * FROM reunion WHERE id_reunion = $1 AND cedula = $2`
 };
 //# sourceMappingURL=queries.js.map

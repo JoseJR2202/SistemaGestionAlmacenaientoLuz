@@ -113,6 +113,15 @@ router.get('/isParticipant/:id', auth_1.isValidate, async (req, res) => {
         res.status(500).json({ status: 500, error: e, message: 'Ocurrio un error en el servidor' });
     }
 });
+router.get('/isAdmin/:id', auth_1.isValidate, async (req, res) => {
+    try {
+        const data = await (0, meeting_1.isAdminMeeting)({ id: req.params.id, cedula: req.user.cedula });
+        res.status(200).json({ status: 200, meeting: data, message: data ? 'Eres el creador de la reunion' : 'No eres el creador de la reunion' });
+    }
+    catch (e) {
+        res.status(500).json({ status: 500, error: e, message: 'Ocurrio un error en el servidor' });
+    }
+});
 router.put('/start/:id', auth_1.isValidate, async (req, res) => {
     try {
         const data = await (0, meeting_1.startMeeting)(+req.params.id);

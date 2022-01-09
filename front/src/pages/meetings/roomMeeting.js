@@ -3,9 +3,10 @@ import io from "socket.io-client";
 import Peer from "simple-peer";
 import styled from "styled-components";
 import {Row, Col, Container, Card} from 'react-bootstrap'
-import { useParams } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 import {BsCameraVideo, BsCameraVideoOff } from 'react-icons/bs';
 import {AiOutlineAudio, AiOutlineAudioMuted, AiOutlineVideoCamera, AiTwotoneAudio } from 'react-icons/ai';
+import {isParticipant, isAdminMeeting} from '../../utils/meeting.comm';
 
 const StyledVideo = styled.video`
     height: 100%;
@@ -41,6 +42,7 @@ const Video = (props) => {
 
 const Room = () => {
 
+    const navigate = useNavigate();
     const searchParams = useParams();
     const [peers, setPeers] = useState([]);
     const socketRef = useRef();
@@ -49,106 +51,167 @@ const Room = () => {
     const peersRef = useRef([]);
     const roomID = searchParams.id;
     const [isAdmin, setAdimn]= useState(false);
+    const [Participant, setParticipant]= useState(false)
     const [controlParticipates, setControlParticipates]=useState([{id:'', video:true}])
     const [video, setVideo]= useState(true);
-    const [audio, setAudio]= useState(true)
-    useEffect(() => {
-        socketRef.current = io.connect("/");
-        navigator.mediaDevices.getUserMedia({ video: true, audio: true }).then(stream => {
-            setStreamvideo(stream)
-            userVideo.current.srcObject = stream;
-            socketRef.current.emit("join room", roomID);
-            socketRef.current.on("all users", users => {
-                console.log(users);
-                if(users.length===0)
+    const [audio, setAudio]= useState(true);
+
+    const checkUser = async()=>{
+        const result= await isAdminMeeting(searchParams.id);
+        switch(result.status){
+            case 200:{
+                if(result.meeting)
                     setAdimn(true)
-                const peers = [];
-                const control=[];
-                users.forEach(userID => {
-                    const peer = createPeer(userID, socketRef.current.id, stream);
+                else{
+                    const result2= await isParticipant(searchParams.id);
+                    switch(result2.status){
+                        case 200:{
+                          if(!result2.meeting){
+                              alert('No eres un participante')
+                              navigate(`/`)
+                          }
+                          setParticipant(true);
+                          break;
+                        }
+                        case 400:{
+                          alert('Por seguridad su sesion a finalizado, por favor vuevla a ingresar');
+                          sessionStorage.removeItem('auth');
+                          sessionStorage.removeItem('acceso');
+                          navigate('/login');
+                          break;
+                        }
+                        case 403:{
+                          alert("no tienes acceso a estas funciones");
+                          sessionStorage.setItem('acceso', result.type);
+                          navigate('/');
+                          break;
+                        }
+                        default:{
+                          
+                        }
+                      }
+                }
+                break;
+            }
+            case 400:{
+                alert('Por seguridad su sesion a finalizado, por favor vuevla a ingresar');
+                sessionStorage.removeItem('auth');
+                sessionStorage.removeItem('acceso');
+                navigate('/login');
+                break;
+            }
+            case 403:{
+                alert("no tienes acceso a estas funciones");
+                sessionStorage.setItem('acceso', result.type);
+                navigate('/');
+                break;
+            }
+            default:{
+                
+            }
+        }
+         
+        if(Participant || isAdmin){
+            socketRef.current = io.connect("/");
+            navigator.mediaDevices.getUserMedia({ video: true, audio: true }).then(stream => {
+                setStreamvideo(stream)
+                userVideo.current.srcObject = stream;
+                socketRef.current.emit("join room", roomID);
+                socketRef.current.on("all users", users => {
+                    console.log(users);
+                    const peers = [];
+                    const control=[];
+                    users.forEach(userID => {
+                        const peer = createPeer(userID, socketRef.current.id, stream);
+                        peersRef.current.push({
+                            peerID: userID,
+                            peer,
+                        })
+                        peers.push({
+                            peerID: userID,
+                            peer,
+                        });
+                        control.push({
+                            id:userID,
+                            video:true,
+                            audio:true
+                        })
+                    })
+                    setPeers(peers);
+                    setControlParticipates(control);
+                    console.log(control)
+                    console.log(peers)
+    
+                })
+    
+                socketRef.current.on("user joined", payload => {
+                    const peer = addPeer(payload.signal, payload.callerID, stream);
                     peersRef.current.push({
-                        peerID: userID,
+                        peerID: payload.callerID,
                         peer,
                     })
-                    peers.push({
-                        peerID: userID,
-                        peer,
-                    });
-                    control.push({
-                        id:userID,
-                        video:true,
-                        audio:true
-                    })
-                })
-                setPeers(peers);
-                setControlParticipates(control);
-                console.log(control)
-                console.log(peers)
-
+    
+                    setPeers(users => [...users, {
+                        peerID:payload.callerID,
+                        peer
+                    }]);
+                    setControlParticipates(control=>[...control,{
+                        id:payload.callerID,
+                        video:true
+                    }]);
+    
+                });
+    
+                socketRef.current.on('hide cam',()=>{
+                    const video=stream.getTracks().find(track=> track.kind==='video');
+                    console.log(video)
+                    video.enabled=false;
+                    setVideo(false)
+                });
+    
+                socketRef.current.on("show cam", ()=>{
+                    const video=stream.getTracks().find(track=> track.kind==='video');
+                    console.log(video)
+                    video.enabled=true;
+                    setVideo(true);
+                });
+    
+                socketRef.current.on('hide sound',()=>{
+                    const audio=stream.getTracks().find(track=> track.kind==='audio');
+                    console.log(video)
+                    audio.enabled=false;
+                    setAudio(false)
+                });
+    
+                socketRef.current.on("show sound", ()=>{
+                    const audio=stream.getTracks().find(track=> track.kind==='audio');
+                    console.log(video)
+                    audio.enabled=true;
+                    setAudio(true);
+                });
+    
+                socketRef.current.on("receiving returned signal", payload => {
+                    const item = peersRef.current.find(p => p.peerID === payload.id);
+                    item.peer.signal(payload.signal);
+                });
+    
+                socketRef.current.on("user left", id => {
+                    const peerOut= peersRef.current.find(item=>item.peerID===id);
+                    if(peerOut)
+                        peerOut.peer.destroy();
+                    const peers= peersRef.current.filter(item=> item.peerID!==id);
+                    peersRef.current=peers;
+                    setPeers(peers);
+                });
             })
+        }
+    }
 
-            socketRef.current.on("user joined", payload => {
-                const peer = addPeer(payload.signal, payload.callerID, stream);
-                peersRef.current.push({
-                    peerID: payload.callerID,
-                    peer,
-                })
 
-                setPeers(users => [...users, {
-                    peerID:payload.callerID,
-                    peer
-                }]);
-                setControlParticipates(control=>[...control,{
-                    id:payload.callerID,
-                    video:true
-                }]);
-
-            });
-
-            socketRef.current.on('hide cam',()=>{
-                const video=stream.getTracks().find(track=> track.kind==='video');
-                console.log(video)
-                video.enabled=false;
-                setVideo(false)
-            });
-
-            socketRef.current.on("show cam", ()=>{
-                const video=stream.getTracks().find(track=> track.kind==='video');
-                console.log(video)
-                video.enabled=true;
-                setVideo(true);
-            });
-
-            socketRef.current.on('hide sound',()=>{
-                const audio=stream.getTracks().find(track=> track.kind==='audio');
-                console.log(video)
-                audio.enabled=false;
-                setAudio(false)
-            });
-
-            socketRef.current.on("show sound", ()=>{
-                const audio=stream.getTracks().find(track=> track.kind==='audio');
-                console.log(video)
-                audio.enabled=true;
-                setAudio(true);
-            });
-
-            socketRef.current.on("receiving returned signal", payload => {
-                const item = peersRef.current.find(p => p.peerID === payload.id);
-                item.peer.signal(payload.signal);
-            });
-
-            socketRef.current.on("user left", id => {
-                const peerOut= peersRef.current.find(item=>item.peerID===id);
-                if(peerOut)
-                    peerOut.peer.destroy();
-                const peers= peersRef.current.filter(item=> item.peerID!==id);
-                peersRef.current=peers;
-                setPeers(peers);
-            });
-        })
+    useEffect(() => {
+        checkUser();
         // eslint-disable-next-line
-    }, []);
+    }, [isAdmin, Participant]);
 
     function createPeer(userToSignal, callerID, stream) {
         const peer = new Peer({

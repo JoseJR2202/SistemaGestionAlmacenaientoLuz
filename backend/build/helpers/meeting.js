@@ -3,7 +3,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.startMeeting = exports.isParticipant = exports.insertParticipates = exports.commentMeeting = exports.culminateMeeting = exports.insertMeeting = exports.getFilterMeetingParticipates = exports.getFilterMeeting = exports.getRecentMeeting = exports.getLastMeeting = exports.getCommentsMeeting = exports.getMeeting = void 0;
+exports.startMeeting = exports.isAdminMeeting = exports.isParticipant = exports.insertParticipates = exports.commentMeeting = exports.culminateMeeting = exports.insertMeeting = exports.getFilterMeetingParticipates = exports.getFilterMeeting = exports.getRecentMeeting = exports.getLastMeeting = exports.getCommentsMeeting = exports.getMeeting = void 0;
 const pool_1 = __importDefault(require("@utils/pool"));
 const queries_1 = require("@utils/queries");
 const pool = pool_1.default.getInstance();
@@ -236,6 +236,21 @@ const isParticipant = async ({ id, cedula }) => {
     }
 };
 exports.isParticipant = isParticipant;
+const isAdminMeeting = async ({ id, cedula }) => {
+    const client = await pool.connect();
+    try {
+        const response = (await client.query(queries_1.queriesMeeting.IS_ADMIN_MEETING, [id, cedula])).rowCount > 0;
+        console.log(response);
+        return response;
+    }
+    catch (e) {
+        throw e;
+    }
+    finally {
+        client.release();
+    }
+};
+exports.isAdminMeeting = isAdminMeeting;
 const startMeeting = async (id) => {
     const client = await pool.connect();
     try {

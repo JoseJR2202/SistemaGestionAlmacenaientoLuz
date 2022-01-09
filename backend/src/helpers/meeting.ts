@@ -211,6 +211,19 @@ export const isParticipant= async ({id, cedula}:{id:number, cedula:number}): Pro
   }
 };
 
+export const isAdminMeeting= async ({id, cedula}:{id:number, cedula:number}): Promise<boolean>=>{
+  const client = await pool.connect();
+  try {
+    const response = (await client.query(queriesMeeting.IS_ADMIN_MEETING, [id, cedula])).rowCount>0;
+    console.log(response)
+    return response;
+  } catch (e) {
+    throw e;
+  } finally {
+    client.release();
+  }
+};
+
 export const startMeeting = async(id:number)=>{
   const client = await pool.connect();
   try {

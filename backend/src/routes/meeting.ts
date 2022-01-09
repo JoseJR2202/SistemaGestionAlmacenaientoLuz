@@ -1,7 +1,7 @@
 import { Router } from 'express';
 import { mettingFieldsValidation, searchMettingFieldsValidation, checkResult } from '@validations/fields';
 import { listMeeting, meeting } from '@interfaces/Meeting';
-import { getMeeting, getCommentsMeeting, getFilterMeeting, getFilterMeetingParticipates, getLastMeeting, getRecentMeeting, insertMeeting, commentMeeting, culminateMeeting, insertParticipates, isParticipant, startMeeting } from '@helpers/meeting';
+import { getMeeting, getCommentsMeeting, getFilterMeeting, getFilterMeetingParticipates, getLastMeeting, getRecentMeeting, insertMeeting, commentMeeting, culminateMeeting, insertParticipates, isParticipant, startMeeting, isAdminMeeting } from '@helpers/meeting';
 import { isValidate } from '@validations/auth';
 
 const router = Router();
@@ -108,6 +108,15 @@ router.get('/isParticipant/:id', isValidate, async(req:any, res)=>{
     try {
         const data:boolean= await isParticipant({id:req.params.id, cedula:req.user.cedula});
         res.status(200).json({ status: 200, meeting: data, message: data?'Eres un participante' : 'No eres un participante'});
+    } catch (e) {
+        res.status(500).json({ status: 500, error: e, message: 'Ocurrio un error en el servidor' });
+    }
+});
+
+router.get('/isAdmin/:id', isValidate, async(req:any, res)=>{
+    try {
+        const data:boolean= await isAdminMeeting({id:req.params.id, cedula:req.user.cedula});
+        res.status(200).json({ status: 200, meeting: data, message: data?'Eres el creador de la reunion' : 'No eres el creador de la reunion'});
     } catch (e) {
         res.status(500).json({ status: 500, error: e, message: 'Ocurrio un error en el servidor' });
     }
