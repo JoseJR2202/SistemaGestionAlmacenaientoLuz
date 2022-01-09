@@ -7,7 +7,7 @@ const auth_1 = require("@validations/auth");
 const router = (0, express_1.Router)();
 router.get('/:id', async (req, res) => {
     try {
-        const data = await (0, meeting_1.getMeeting)(+req.params.id);
+        const data = await (0, meeting_1.getMeeting)({ id: req.params.id, cedula: req.user.cedula });
         res.status(200).json({ status: 200, meeting: data, message: 'Detalles de la reunion enviados' });
     }
     catch (e) {
@@ -69,7 +69,7 @@ router.post('/', auth_1.isValidate, fields_1.mettingFieldsValidation, fields_1.c
             invitados.push(req.user.cedula);
         }
         ;
-        const data = await (0, meeting_1.insertMeeting)({ asunto: asunto, descripcion: descripcion, fecha_inicio: fecha, invitados: invitados });
+        const data = await (0, meeting_1.insertMeeting)({ asunto: asunto, descripcion: descripcion, fecha_inicio: fecha, invitados: invitados, cedula: req.user.cedula });
         res.status(200).json({ status: 200, meeting: data, message: 'reuniones enviadas' });
     }
     catch (e) {
@@ -99,6 +99,24 @@ router.post('/participates/:id', auth_1.isValidate, async (req, res) => {
     try {
         const data = await (0, meeting_1.insertParticipates)({ id: req.params.id, cedula: req.user.cedula });
         res.status(200).json({ status: 200, meeting: data, message: 'agregado participante' });
+    }
+    catch (e) {
+        res.status(500).json({ status: 500, error: e, message: 'Ocurrio un error en el servidor' });
+    }
+});
+router.get('/isParticipant/:id', auth_1.isValidate, async (req, res) => {
+    try {
+        const data = await (0, meeting_1.isParticipant)({ id: req.params.id, cedula: req.user.cedula });
+        res.status(200).json({ status: 200, meeting: data, message: data ? 'Eres un participante' : 'No eres un participante' });
+    }
+    catch (e) {
+        res.status(500).json({ status: 500, error: e, message: 'Ocurrio un error en el servidor' });
+    }
+});
+router.put('/start/:id', auth_1.isValidate, async (req, res) => {
+    try {
+        const data = await (0, meeting_1.startMeeting)(+req.params.id);
+        res.status(200).json({ status: 200, meeting: data, message: 'reunion comenzada' });
     }
     catch (e) {
         res.status(500).json({ status: 500, error: e, message: 'Ocurrio un error en el servidor' });

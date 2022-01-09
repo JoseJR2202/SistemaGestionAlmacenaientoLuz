@@ -1,4 +1,6 @@
+/// <reference types="node" />
 import './config/alias';
-declare const app: import("express-serve-static-core").Express;
-export default app;
+import * as http from 'http';
+declare const server: http.Server;
+export default server;
 //# sourceMappingURL=index.d.ts.map

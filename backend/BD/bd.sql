@@ -51,7 +51,8 @@ CREATE TABLE "reunion" (
   "fecha_inicio" timestamp NOT NULL,
   "fecha_fin" timestamp,
   "cant_participantes" integer DEFAULT 0, --Realizar Trigger,
-  "estado" varchar NOT NULL DEFAULT 'Espere' --E: Espera. C: Culminado
+  "estado" varchar NOT NULL DEFAULT 'Espere', --E: Espera. C: Culminado
+  "cedula" integer NOT NULL
 );
 
 CREATE TABLE "participante" (
@@ -117,6 +118,8 @@ ALTER TABLE "archivo_escuela" ADD FOREIGN KEY ("id_archivo") REFERENCES "archivo
 ALTER TABLE "archivo_escuela" ADD FOREIGN KEY ("id_escuela") REFERENCES "escuela" ("id_escuela") on update cascade on delete cascade;
 
 ALTER TABLE "escuela" ADD FOREIGN KEY ("id_facultad") REFERENCES "facultad" ("id_facultad") on delete no action on update cascade;
+
+ALTER TABLE "reunion" ADD FOREIGN KEY ("cedula") REFERENCES "usuario" ("cedula") on update cascade on delete cascade;
 
 --Functions and Triggers
 

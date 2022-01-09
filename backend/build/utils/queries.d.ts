@@ -38,7 +38,9 @@ export declare const queriesMeeting: {
     GET_COMMENTS_MEETING: string;
     INSERT_MEETING: string;
     CULMINATE_MEETING: string;
+    START_MEETING: string;
     INSERT_PARTICIPATES_MEETING: string;
     COMMENT_MEETIG: string;
+    IS_PARTICIPANT: string;
 };
 //# sourceMappingURL=queries.d.ts.map

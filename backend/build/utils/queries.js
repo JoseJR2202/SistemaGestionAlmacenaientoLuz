@@ -27,21 +27,23 @@ exports.queriesProyect = {
     GET_COMMENT_PROYECTS_USER: `SELECT DISTINCT nota_archivo.id_archivo AS id, archivo.titulo AS titulo, usuario.nombre AS nombre, nota_archivo.fecha as fecha FROM nota_archivo, archivo, autor, usuario where autor.cedula=$1 AND usuario.cedula=nota_archivo.cedula AND archivo.id_archivo=nota_archivo.id_archivo AND autor.id_archivo=archivo.id_archivo ORDER BY nota_archivo.fecha DESC LIMIT 4`
 };
 exports.queriesMeeting = {
-    GET_MEETING: `SELECT asunto, descripcion, to_char(fecha_inicio, 'DD/MM/YYYY HH24:MI') as fecha_inicio, to_char(fecha_fin, 'DD/MM/YYYY HH24:MI') as fecha_fin, cant_participantes FROM reunion WHERE id_reunion = $1`,
+    GET_MEETING: `SELECT asunto, descripcion, to_char(fecha_inicio, 'DD/MM/YYYY HH24:MI') as fecha_inicio, to_char(fecha_fin, 'DD/MM/YYYY HH24:MI') as fecha_fin, cant_participantes, estado, cedula, current_timestamp >= fecha_inicio as inicio FROM reunion WHERE id_reunion = $1`,
     GET_LAST_MEETING: `SELECT asunto, to_char(fecha_fin, 'DD/MM/YYYY HH24:MI') as fecha_fin FROM reunion WHERE fecha_fin is not null ORDER BY fecha_fin DESC LIMIT 3`,
     GET_RECENT_MEETING: `SELECT asunto, to_char(fecha_inicio, 'DD/MM/YYYY HH24:MI') as fecha_inicio FROM reunion WHERE fecha_inicio >= current_timestamp ORDER BY fecha_inicio ASC LIMIT 3`,
     GET_MEETING_FILTER: {
-        BEGINNING: `SELECT id_reunion as id, asunto, to_char(fecha_inicio, 'DD/MM/YYYY HH24:MI') as fecha_inicio FROM reunion WHERE estado like 'Espera' `,
+        BEGINNING: `SELECT id_reunion as id, asunto, to_char(fecha_inicio, 'DD/MM/YYYY HH24:MI') as fecha_inicio FROM reunion WHERE estado IN ('Espere','Iniciado') `,
         END: ` ORDER BY fecha_inicio DESC`
     },
     GET_MEETING_FILTER_PARTICIPATES: {
-        BEGINNING: `SELECT reunion.id_reunion as id, asunto, to_char(fecha_inicio, 'DD/MM/YYYY HH24:MI') as fecha_inicio FROM reunion, participante WHERE participante.cedula = $1 AND reunion.id_reunion = participante.id_reunion AND estado like 'Espera' `,
+        BEGINNING: `SELECT reunion.id_reunion as id, asunto, to_char(fecha_inicio, 'DD/MM/YYYY HH24:MI') as fecha_inicio FROM reunion, participante WHERE participante.cedula = $1 AND reunion.id_reunion = participante.id_reunion AND estado IN ('Espere','Iniciado') `,
         END: ` ORDER BY fecha_inicio DESC`
     },
     GET_COMMENTS_MEETING: `SELECT nota_reunion.contenido as contenido, to_char(nota_reunion.fecha, 'DD/MM/YYYY HH24:MI') as fecha, usuario.nombre as nombre FROM usuario, nota_reunion WHERE nota_reunion.id_reunion = $1 AND nota_reunion.cedula = usuario.cedula ORDER BY nota_reunion.fecha DESC`,
-    INSERT_MEETING: `INSERT INTO reunion (asunto, descripcion, fecha_inicio) VALUES ($1, $2, $3) RETURNING *`,
+    INSERT_MEETING: `INSERT INTO reunion (asunto, descripcion, fecha_inicio, cedula) VALUES ($1, $2, $3, $4) RETURNING *`,
     CULMINATE_MEETING: `UPDATE reunion SET fecha_fin = now(), estado = 'Culminado' WHERE id_reunion = $1`,
+    START_MEETING: `UPDATE reunion SET estado = 'Iniciado' WHERE id_reunion = $1`,
     INSERT_PARTICIPATES_MEETING: `INSERT INTO participante VALUES ($1, $2) RETURNING *`,
-    COMMENT_MEETIG: `INSERT INTO nota_reunion (contenido, id_reunion, cedula) VALUES ($1, $2, $3) RETURNING *`
+    COMMENT_MEETIG: `INSERT INTO nota_reunion (contenido, id_reunion, cedula) VALUES ($1, $2, $3) RETURNING *`,
+    IS_PARTICIPANT: `SELECT * FROM participante WHERE id_reunion = $1 AND cedula = $2`
 };
 //# sourceMappingURL=queries.js.map

@@ -4,7 +4,7 @@ import { meeting, listMeeting } from '@interfaces/Meeting';
 
 const pool = Pool.getInstance();
 
-export const getMeeting= async (id:number): Promise<meeting>=>{
+export const getMeeting= async ({id, cedula}:{id:number, cedula:number}): Promise<meeting>=>{
     const client = await pool.connect();
     try {
       const response = (await client.query(queriesMeeting.GET_MEETING, [id])).rows[0];
@@ -15,7 +15,10 @@ export const getMeeting= async (id:number): Promise<meeting>=>{
         descripcion:response.descripcion,
         fecha_inicio:response.fecha_inicio,
         fecha_fin:response.fecha_fin,
-        participantes:response.cant_participantes
+        participantes:response.cant_participantes,
+        admin:response.cedula===cedula,
+        estado:response.estado,
+        inicio:response.inicio
       }
       return meeting;
     } catch (e) {
@@ -118,11 +121,11 @@ export const getFilterMeetingParticipates= async({titulo, horario, cedula}:{titu
   }
 };
 
-export const insertMeeting= async({asunto, descripcion, fecha_inicio, invitados}:{asunto:string, descripcion:string, fecha_inicio:Date, invitados:number[]}):Promise<meeting>=>{
+export const insertMeeting= async({asunto, descripcion, fecha_inicio, cedula, invitados}:{asunto:string, descripcion:string, fecha_inicio:Date, cedula:number, invitados:number[]}):Promise<meeting>=>{
   const client = await pool.connect();
   try {
     await client.query('BEGIN');
-    const response = (await client.query(queriesMeeting.INSERT_MEETING,[asunto, descripcion, fecha_inicio])).rows[0]; 
+    const response = (await client.query(queriesMeeting.INSERT_MEETING,[asunto, descripcion, fecha_inicio, cedula])).rows[0]; 
     console.log(response)
     invitados.map(async (rows)=>{
       const num:number=(await client.query(queriesMeeting.INSERT_PARTICIPATES_MEETING,[response.id_reunion,rows])).rows[0].cedula;
@@ -194,3 +197,32 @@ export const insertParticipates = async({id, cedula}:{id:number, cedula:number})
     client.release();
   } 
 }
+
+export const isParticipant= async ({id, cedula}:{id:number, cedula:number}): Promise<boolean>=>{
+  const client = await pool.connect();
+  try {
+    const response = (await client.query(queriesMeeting.IS_PARTICIPANT, [id, cedula])).rowCount>0;
+    console.log(response)
+    return response;
+  } catch (e) {
+    throw e;
+  } finally {
+    client.release();
+  }
+};
+
+export const startMeeting = async(id:number)=>{
+  const client = await pool.connect();
+  try {
+    await client.query('BEGIN');
+    const response = (await client.query(queriesMeeting.START_MEETING,[id])).rowCount>0; 
+    console.log(response)
+    await client.query('COMMIT');
+    return response;
+  } catch (e) {
+    await client.query('ROLLBACK');
+    throw e;
+  } finally {
+    client.release();
+  }
+};

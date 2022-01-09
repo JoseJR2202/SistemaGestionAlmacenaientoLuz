@@ -5,7 +5,9 @@ export interface meeting{
     fecha_inicio:string,
     fecha_fin?:string,
     participantes?:number[],
-    estado?:string
+    estado?:string,
+    admin?:boolean,
+    inicio?:boolean
 }
 
 export interface listMeeting{
